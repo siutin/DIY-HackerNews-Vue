@@ -21,7 +21,7 @@
 <script>
   import { mapGetters } from 'vuex'
   export default {
-    name: "Home",
+    name: 'Home',
     data () {
       return {}
     },
@@ -31,7 +31,7 @@
       ])
     },
     methods: {
-      onRefreshClicked (){
+      onRefreshClicked () {
         console.log('onRefreshClicked')
         this.updateData(this)
       },
@@ -39,10 +39,10 @@
         vm.$store.dispatch('syncHWNewStoreIDs')
       }
     },
-    beforeRouteEnter (to, from , next) {
+    beforeRouteEnter (to, from, next) {
       next(vm => vm.syncData(vm))
     },
-    beforeRouteUpdate (to, from , next) {
+    beforeRouteUpdate (to, from, next) {
       next(vm => vm.syncData(vm))
     }
   }
