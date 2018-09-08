@@ -5,6 +5,8 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import VueLodash from 'vue-lodash'
+import moment from 'moment'
+
 Vue.use(VueLodash)
 
 Vue.config.productionTip = false

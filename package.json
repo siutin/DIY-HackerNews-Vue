@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "lodash": "^4.17.10",
+    "moment": "^2.22.2",
     "vue": "^2.5.17",
     "vue-lodash": "^2.0.0",
     "vue-mugen-scroll": "^0.2.5",
