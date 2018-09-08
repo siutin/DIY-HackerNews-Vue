@@ -16,57 +16,57 @@
 </template>
 
 <script>
-  import Vue from 'vue'
-  import MugenScroll from 'vue-mugen-scroll'
-  import { mapGetters } from 'vuex'
-  import RowItem from '@/components/RowItem.vue'
+import Vue from 'vue'
+import MugenScroll from 'vue-mugen-scroll'
+import { mapGetters } from 'vuex'
+import RowItem from '@/components/RowItem.vue'
 
-  const rowHeight = 88
-  export default {
-    name: 'Home',
-    components: { RowItem, MugenScroll },
-    data () {
-      return {
-        maxScrolledPage: 0,
-        loading: true
-      }
-    },
-    computed: {
-      ...mapGetters([
-        'getStoreIds'
-      ]),
-      getPaginatedIds () {
-        return this.getStoreIds.sort().reverse().slice(0, this.getMaxRowsPerPage * this.maxScrolledPage)
-      },
-      getMaxRowsPerPage () {
-        return Math.ceil((window.innerHeight - 56) / rowHeight)
-      }
-    },
-    methods: {
-      onRefreshClicked () {
-        console.log('onRefreshClicked')
-        this.updateData(this)
-      },
-      syncData (vm) {
-        vm.$store.dispatch('syncHWNewStoreIDs')
-      },
-      updateScrollPage () {
-        console.log(`updateScrollPage`)
-        this.loading = true
-        this.maxScrolledPage++
-        this.loading = false
-      }
-    },
-    beforeRouteEnter (to, from, next) {
-      next(vm => vm.syncData(vm))
-    },
-    beforeRouteUpdate (to, from, next) {
-      next(vm => vm.syncData(vm))
-    },
-    mounted () {
-      this.updateScrollPage()
+const rowHeight = 88
+export default {
+  name: 'Home',
+  components: { RowItem, MugenScroll },
+  data () {
+    return {
+      maxScrolledPage: 0,
+      loading: true
     }
+  },
+  computed: {
+    ...mapGetters([
+      'getStoreIds'
+    ]),
+    getPaginatedIds () {
+      return this.getStoreIds.sort().reverse().slice(0, this.getMaxRowsPerPage * this.maxScrolledPage)
+    },
+    getMaxRowsPerPage () {
+      return Math.ceil((window.innerHeight - 56) / rowHeight)
+    }
+  },
+  methods: {
+    onRefreshClicked () {
+      console.log('onRefreshClicked')
+      this.updateData(this)
+    },
+    syncData (vm) {
+      vm.$store.dispatch('syncHWNewStoreIDs')
+    },
+    updateScrollPage () {
+      console.log(`updateScrollPage`)
+      this.loading = true
+      this.maxScrolledPage++
+      this.loading = false
+    }
+  },
+  beforeRouteEnter (to, from, next) {
+    next(vm => vm.syncData(vm))
+  },
+  beforeRouteUpdate (to, from, next) {
+    next(vm => vm.syncData(vm))
+  },
+  mounted () {
+    this.updateScrollPage()
   }
+}
 
 </script>
 
