@@ -2,13 +2,9 @@
   <v-card>
     <v-container fluid grid-list-lg>
       <v-slide-y-transition mode="out-in">
-        <v-layout row wrap>
-         <v-flex xs12 v-for="(item, id) in getPaginatedList" :key="id">
-           <v-card color="blue-grey darken-2" class="white--text">
-             <v-card-title primary-title>
-               <div class="headline">{{ id }} {{ item }} {{ maxScrolledPage }} {{ getMaxRowsPerPage }}</div>
-               </v-card-title>
-           </v-card>
+        <v-layout row wrap align-center justify-center>
+         <v-flex xs12 v-for="(id, index) in getPaginatedIds" :key="index">
+           <row-item :index="index" :id="id" :max-scrolled-page="maxScrolledPage" :max-rows-per-page="getMaxRowsPerPage" />
          </v-flex>
          <mugen-scroll :handler="updatePaginatedData" :should-handle="!loading">
            loading...
@@ -23,24 +19,24 @@
   import Vue from 'vue'
   import MugenScroll from 'vue-mugen-scroll'
   import { mapGetters } from 'vuex'
+  import RowItem from '@/components/RowItem.vue'
 
   const rowHeight = 88
   export default {
     name: 'Home',
-    components: { MugenScroll },
+    components: { RowItem, MugenScroll },
     data () {
       return {
-        maxScrolledPage: 1,
-        loading: false
+        maxScrolledPage: 0,
+        loading: true
       }
     },
     computed: {
       ...mapGetters([
-        'getStores'
+        'getStoreIds'
       ]),
-      getPaginatedList () {
-        let keys = Object.keys(this.getStores).sort().slice(0, this.getMaxRowsPerPage * this.maxScrolledPage)
-        return Vue._.pick(this.getStores, keys)
+      getPaginatedIds () {
+        return this.getStoreIds.sort().reverse().slice(0, this.getMaxRowsPerPage * this.maxScrolledPage)
       },
       getMaxRowsPerPage () {
         return Math.ceil((window.innerHeight - 56) / rowHeight)
@@ -54,7 +50,8 @@
       syncData (vm) {
         vm.$store.dispatch('syncHWNewStoreIDs')
       },
-      updatePaginatedData () {
+      updateScrollPage () {
+        console.log(`updateScrollPage`)
         this.loading = true
         this.maxScrolledPage++
         this.loading = false
@@ -65,6 +62,9 @@
     },
     beforeRouteUpdate (to, from, next) {
       next(vm => vm.syncData(vm))
+    },
+    mounted () {
+      this.updateScrollPage()
     }
   }
 
