@@ -6,8 +6,8 @@
          <v-flex xs12 v-for="(id, index) in getPaginatedIds" :key="index">
            <row-item :index="index" :id="id" :max-scrolled-page="maxScrolledPage" :max-rows-per-page="getMaxRowsPerPage" />
          </v-flex>
-         <mugen-scroll :handler="updatePaginatedData" :should-handle="!loading">
            loading...
+         <mugen-scroll :handler="updateScrollPage" :should-handle="!loading">
          </mugen-scroll>
         </v-layout>
       </v-slide-y-transition>
