@@ -3,13 +3,16 @@
     <v-progress-linear v-if="_.isEmpty(item)" :indeterminate="true"></v-progress-linear>
 
     <v-card-title v-else primary-title>
-      <div class="headline">{{ index }} {{ id }} {{ maxScrolledPage }} {{ maxRowsPerPage }}</div>
-
+      <div>
+        <div class="headline">{{ item.title }}</div>
+        <span class="grey--text">{{ getPostedAt }} | {{ item.by }}</span>
+      </div>
       </v-card-title>
   </v-card>
 </template>
 
 <script>
+import moment from 'moment'
 
 export default {
   name: 'RowItem',
@@ -24,7 +27,11 @@ export default {
       item: {}
     }
   },
-
+  computed: {
+    getPostedAt () {
+      return moment.unix(this.item.time).fromNow()
+    }
+  },
   methods: {
     onApiComplete (data) {
       console.log(`onApiComplete - id: ${this.id}`)
