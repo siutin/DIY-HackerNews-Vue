@@ -4,10 +4,11 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 
 const HACKER_NEWS_API_BASE_POINT = 'https://hacker-news.firebaseio.com/v0'
-const types = { HW_NEW_STORES: 'HW_NEW_STORES' }
+const types = { HW_NEW_STORES: 'HW_NEW_STORES', HW_GET_STORE: 'HW_GET_STORE'  }
 
 const state = {
   storeIds: [],
+  stores: []
 }
 
 const getters = {
@@ -47,12 +48,40 @@ const mutations = {
         }).catch(console.error)
     }
 
+  },
+  [types.HW_GET_STORE] (state, payload) {
+    console.log(types.HW_GET_STORE)
+    const { id, callback } = payload
+    const store = window.localStorage.getItem(`store-${id}`)
+    if(!store) {
+      fetch(`${HACKER_NEWS_API_BASE_POINT}/item/${id}.json`)
+        .then(res => res.json())
+        .then(data => new Promise((resolve, reject) =>
+         !Vue._.isEmpty(data) ? resolve(data) : reject(new Error('data is empty'))
+        ))
+        .then(data => {
+          console.log(`state.stores last: ${JSON.stringify(_.last(state.stores))}`)
+          Vue.set(state, 'stores', [...state.stores, data])
+          window.localStorage.setItem(`store-${id}`, JSON.stringify(data))
+
+          if (typeof(callback) == 'function') {
+            callback(data)
+          }
+        }).catch(err => console.error(err.message))
+    } else {
+      if (typeof(callback) == 'function') {
+        callback(JSON.parse(store))
+      }
+    }
   }
 }
 const actions = {
   syncHWNewStoreIDs ({ commit }, payload) {
     commit(types.HW_NEW_STORES, payload)
   },
+  syncHWStore ({ commit }, payload) {
+    console.log(payload);
+    commit(types.HW_GET_STORE, payload)
   }
 }
 
