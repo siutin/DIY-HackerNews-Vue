@@ -22,9 +22,9 @@ const mutations = {
         Vue._.isArray(data) && !Vue._.isEmpty(data) ? resolve(data) : reject(new Error())
       ))
       .then(data => {
-          Vue._.each(data, storeId => {
-            Vue.set(state.stores, storeId, {})
-          })
+        Vue._.each(data, storeId => {
+          Vue.set(state.stores, storeId, {})
+        })
       })
   }
 }
