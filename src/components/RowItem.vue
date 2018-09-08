@@ -24,8 +24,16 @@ export default {
       item: {}
     }
   },
+
+  methods: {
+    onApiComplete (data) {
+      console.log(`onApiComplete - id: ${this.id}`)
+      this.item = data
+    }
+  },
   created () {
     console.log(`RowItem - created`)
+    this.$store.dispatch('syncHWStore', { id: this.id, callback: this.onApiComplete })
   }
 }
 </script>
