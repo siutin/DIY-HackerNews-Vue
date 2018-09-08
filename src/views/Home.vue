@@ -4,10 +4,10 @@
       <v-slide-y-transition mode="out-in">
         <v-layout row wrap>
 
-         <v-flex xs12 v-for="id in getNewStoreIds">
+         <v-flex xs12 v-for="(item, id) in getStores">
            <v-card color="blue-grey darken-2" class="white--text">
              <v-card-title primary-title>
-               <div class="headline">{{ id }}</div>
+               <div class="headline">{{ id }} {{ item }}</div>
                </v-card-title>
            </v-card>
          </v-flex>
@@ -27,7 +27,7 @@
     },
     computed: {
       ...mapGetters([
-        'getNewStoreIds'
+        'getStores'
       ])
     },
     methods: {
