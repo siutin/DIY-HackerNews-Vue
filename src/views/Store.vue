@@ -59,28 +59,17 @@ export default {
     walkThroughComments(data) {
       // console.log(`walkThroughComments parent: ${data.parent}`)
       if (data.id != this.id) {
-        if (data.kids) {
-          console.log(`detect kids (id: ${data.id} parentId: ${data.parent}) kids: ${data.kids}`)
-        }
         let index = _.findIndex(this.orderedIds, oid => oid === data.id)
-        if (index == -1) {
-          let parentIndex = _.findIndex(this.orderedIds, oid => oid === data.parent)
-          if (parentIndex == -1) {
-              console.log(`bug? parent id not found (id: ${data.id} parentId: ${data.parent}) this.orderedIds: ${this.orderedIds}`)
-          } else {
-            this.orderedIds.splice(parentIndex + 1, 0, data.id)
+        console.log(`index: ${index} id: ${data.id} parentId: ${data.parent} this.orderedIds: ${this.orderedIds}`)
+        if (index != -1) {
+          if (data.kids) {
+            console.log(`detect kids (id: ${data.id} parentId: ${data.parent}) kids: ${data.kids}`);
+            [].splice.apply(this.orderedIds, [index + 1, 0].concat(data.kids))
           }
+        } else {
+          console.log(`bug? id not found (id: ${data.id} parentId: ${data.parent}) this.orderedIds: ${this.orderedIds}`)
         }
-
         this.subItems.push(data)
-        // let index = _.findIndex(this.getKids, kid => { return kid == data.id })
-        // this.subItems.push(Object.assign({}, data, { index }))
-        // console.log(`index: ${index} kid: ${data.id} getKids:${this.getKids}`)
-        // if (index == -1) {
-        //   this.subItems.push(data)
-        // } else {
-        //   this.subItems.splice(index - 1, 0, data)
-        // }
       }
 
       _.each(data.kids, kid => {
