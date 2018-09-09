@@ -13,7 +13,7 @@
          <div class="">{{ item.title }}</div>
          <span class="grey--text">{{ getPostedAt }} | @{{ item.by }} | {{ swipeDirection }} </span>
        </div>
-       </v-card-title>
+     </v-card-title>
    </div>
 
   </v-card>
