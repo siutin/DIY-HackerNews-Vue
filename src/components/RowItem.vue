@@ -11,7 +11,7 @@
      <v-card-title class="static" @click="onClickStatic">
        <div class="static">
          <div class="">{{ item.title }}</div>
-         <span class="grey--text">{{ getPostedAt }} | @{{ item.by }} | {{ swipeDirection }} </span>
+         <span class="grey--text">{{ getPostedAt }} | @{{ item.by }} </span>
        </div>
      </v-card-title>
      <transition name="expand">
