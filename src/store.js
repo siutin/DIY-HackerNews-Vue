@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import moment from 'moment'
 
 Vue.use(Vuex)
 
@@ -19,8 +20,13 @@ const getters = {
 }
 const mutations = {
   [types.HW_NEW_STORES] (state, payload) {
-    const newstories = window.localStorage.getItem('newstories')
-    if (newstories) {
+    const newstories = window.localStorage.getItem(`${types.HW_NEW_STORES}`)
+
+    const last_updated_at = window.localStorage.getItem(`${types.HW_NEW_STORES}#last_updated_at`)
+    const useCache = moment().add(1, 'minutes').isAfter(moment(last_updated_at))
+    console.log(`${types.HW_NEW_STORES} - useCache: ${useCache}`)
+
+    if (newstories && useCache) {
       const data = JSON.parse(newstories)
       Vue._.each(data, storeId => {
         if (state.storeIds.indexOf(storeId) == -1) {
@@ -38,7 +44,9 @@ const mutations = {
           Vue._.isArray(data) && !Vue._.isEmpty(data) ? resolve(data) : reject(new Error())
         ))
         .then(data => {
-          window.localStorage.setItem('newstories', JSON.stringify(data))
+          window.localStorage.setItem(`${types.HW_NEW_STORES}`, JSON.stringify(data))
+          window.localStorage.setItem(`${types.HW_NEW_STORES}#last_updated_at`, moment().toISOString())
+
           Vue._.each(data, storeId => {
             if (state.storeIds.indexOf(storeId) == -1) {
               Vue.set(state, 'storeIds', [...state.storeIds, storeId])
@@ -55,7 +63,16 @@ const mutations = {
     console.log(types.HW_GET_STORE)
     const { id, callback } = payload
     const store = window.localStorage.getItem(`store-${id}`)
-    if(!store) {
+
+    const last_updated_at = window.localStorage.getItem(`store-${id}#last_updated_at`)
+    const useCache = moment().add(1, 'minutes').isAfter(moment(last_updated_at))
+    console.log(`${types.HW_GET_STORE} - store-${id} - useCache: ${useCache}`)
+
+    if (store && useCache) {
+      if (typeof(callback) == 'function') {
+        callback(JSON.parse(store))
+      }
+    } else {
       fetch(`${HACKER_NEWS_API_BASE_POINT}/item/${id}.json`)
         .then(res => res.json())
         .then(data => new Promise((resolve, reject) =>
@@ -65,15 +82,12 @@ const mutations = {
           console.log(`state.stores last: ${JSON.stringify(_.last(state.stores))}`)
           Vue.set(state, 'stores', [...state.stores, data])
           window.localStorage.setItem(`store-${id}`, JSON.stringify(data))
+          window.localStorage.setItem(`store-${id}#last_updated_at`, moment().toISOString())
 
           if (typeof(callback) == 'function') {
             callback(data)
           }
         }).catch(err => console.error(err.message))
-    } else {
-      if (typeof(callback) == 'function') {
-        callback(JSON.parse(store))
-      }
     }
   },
   [types.APP_SET_TITLE] (state, payload) {
