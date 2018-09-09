@@ -9,7 +9,7 @@
           <div>{{ orderedIds }}</div> -->
           <span class="grey--text">@{{ item.by }} | {{ item.id }}</span>
       </div>
-      <template v-for="subItem in getOrderedSubItems">
+      <template v-for="subItem in getCleanUpSubItems">
         <v-divider></v-divider>
         <div class="content" >
           <div v-html="subItem.text"></div>
@@ -38,8 +38,8 @@ export default {
   computed: {
     getPostedAt () { return moment.unix(this.item.time).fromNow()},
     getKids () { return this.item.kids },
-    getOrderedSubItems () {
-      return this.subItems.slice().sort((a,b) => {
+    getCleanUpSubItems () {
+      return this.subItems.filter(subItem => !subItem.deleted).slice().sort((a,b) => {
         return this.orderedIds.indexOf(a.id) - this.orderedIds.indexOf(b.id)
       })
     }
