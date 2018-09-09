@@ -4,16 +4,18 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 
 const HACKER_NEWS_API_BASE_POINT = 'https://hacker-news.firebaseio.com/v0'
-const types = { HW_NEW_STORES: 'HW_NEW_STORES', HW_GET_STORE: 'HW_GET_STORE'  }
+const types = { HW_NEW_STORES: 'HW_NEW_STORES', APP_SET_TITLE: 'APP_SET_TITLE' }
 
 const state = {
+  title: '',
   storeIds: [],
   stores: []
 }
 
 const getters = {
   getStoreIds: state => state.storeIds,
-  getStores: state => state.stores
+  getStores: state => state.stores,
+  getTitle: state => state.title
 }
 const mutations = {
   [types.HW_NEW_STORES] (state, payload) {
@@ -73,6 +75,11 @@ const mutations = {
         callback(JSON.parse(store))
       }
     }
+  },
+  [types.APP_SET_TITLE] (state, payload) {
+    console.log(types.APP_SET_TITLE)
+    const { title } = payload
+    state.title = title
   }
 }
 const actions = {
@@ -82,6 +89,9 @@ const actions = {
   syncHWStore ({ commit }, payload) {
     console.log(payload);
     commit(types.HW_GET_STORE, payload)
+  },
+  setAppTitle ({ commit }, payload) {
+    commit(types.APP_SET_TITLE, payload)
   }
 }
 

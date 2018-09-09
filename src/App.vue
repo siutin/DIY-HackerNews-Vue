@@ -20,7 +20,7 @@
        </v-list>
      </v-menu>
      <v-spacer></v-spacer>
-      <v-toolbar-title>{{ title }}</v-toolbar-title>
+      <v-toolbar-title>{{ getTitle }}</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn icon>
          <v-icon>favorite</v-icon>
@@ -47,6 +47,9 @@ export default {
       ],
       title: 'Hacker News'
     }
+  },
+  computed: {
+    getTitle () { return this.$store.getters.getTitle || this.title }
   }
 }
 </script>
