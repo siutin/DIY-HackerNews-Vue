@@ -42,7 +42,7 @@ export default {
     }
   },
   computed: {
-    getPostedAt () { return moment.unix(this.item.time).fromNow()},
+    getPostedAt () { return moment.unix(this.item.time).fromNow() },
     getCommentCount () { return this.item.descendants }
   },
   methods: {
@@ -52,11 +52,10 @@ export default {
     },
     onSwipe (direction) {
       this.swipeDirection = direction
-      if (direction == 'Right') {
+      if (direction === 'Right') {
         this.showVisitLink = true
         this.showDiscussLink = false
-
-      } else if (direction == 'Left') {
+      } else if (direction === 'Left') {
         this.showDiscussLink = true
         this.showVisitLink = false
       } else {
