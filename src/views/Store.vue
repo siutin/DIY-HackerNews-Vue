@@ -9,24 +9,25 @@
           <div>{{ orderedIds }}</div> -->
           <span class="grey--text">@{{ item.by }} | {{ item.id }}</span>
       </div>
-      <template v-for="subItem in getCleanUpSubItems">
+      <div v-for="(subItem, index) in getCleanUpSubItems" :key="index">
         <v-divider></v-divider>
         <div class="content" >
           <div v-html="subItem.text"></div>
           <span class="grey--text">@{{ subItem.by }} | {{ subItem.id }}</span>
         </div>
-      </template>
+      </div>
     </v-list>
   </div>
 </template>
 
 <script>
+import Vue from 'vue'
 import moment from 'moment'
 
 export default {
   name: 'Store',
   components: {},
-  data() {
+  data () {
     return {
       id: -1,
       loading: false,
@@ -36,32 +37,32 @@ export default {
     }
   },
   computed: {
-    getPostedAt () { return moment.unix(this.item.time).fromNow()},
+    getPostedAt () { return moment.unix(this.item.time).fromNow() },
     getKids () { return this.item.kids },
     getCleanUpSubItems () {
-      return this.subItems.filter(subItem => !subItem.deleted).slice().sort((a,b) => {
+      return this.subItems.filter(subItem => !subItem.deleted).slice().sort((a, b) => {
         return this.orderedIds.indexOf(a.id) - this.orderedIds.indexOf(b.id)
       })
     }
   },
   methods: {
-    onApiComplete(data) {
+    onApiComplete (data) {
       console.log(`onApiComplete`)
       this.item = data
       this.$store.dispatch('setAppTitle', {
         title: this.item.title
       })
       this.loadding = false
-      _.each(data.kids, kid => this.orderedIds.push(kid))
+      Vue._.each(data.kids, kid => this.orderedIds.push(kid))
 
       this.walkThroughComments(data)
     },
-    walkThroughComments(data) {
+    walkThroughComments (data) {
       // console.log(`walkThroughComments parent: ${data.parent}`)
-      if (data.id != this.id) {
-        let index = _.findIndex(this.orderedIds, oid => oid === data.id)
+      if (data.id !== this.id) {
+        let index = Vue._.findIndex(this.orderedIds, oid => oid === data.id)
         console.log(`index: ${index} id: ${data.id} parentId: ${data.parent} this.orderedIds: ${this.orderedIds}`)
-        if (index != -1) {
+        if (index !== -1) {
           if (data.kids) {
             console.log(`detect kids (id: ${data.id} parentId: ${data.parent}) kids: ${data.kids}`);
             [].splice.apply(this.orderedIds, [index + 1, 0].concat(data.kids))
@@ -72,14 +73,14 @@ export default {
         this.subItems.push(data)
       }
 
-      _.each(data.kids, kid => {
+      Vue._.each(data.kids, kid => {
         this.$store.dispatch('syncHWStore', {
           id: kid,
           callback: this.walkThroughComments
         })
       })
     },
-    syncData(vm) {
+    syncData (vm) {
       this.loadding = false
       vm.$store.dispatch('syncHWStore', {
         id: this.id,
@@ -87,7 +88,7 @@ export default {
       })
     }
   },
-  beforeRouteEnter(to, from, next) {
+  beforeRouteEnter (to, from, next) {
     let id = to.params.id
     if (id) {
       next(vm => {
@@ -96,7 +97,7 @@ export default {
       })
     }
   },
-  beforeRouteUpdate(to, from, next) {
+  beforeRouteUpdate (to, from, next) {
     let id = to.params.id
     if (id) {
       this.id = id
@@ -104,7 +105,7 @@ export default {
       next()
     }
   },
-  beforeRouteLeave(to, from, next) {
+  beforeRouteLeave (to, from, next) {
     this.$store.dispatch('setAppTitle', {
       title: ''
     })
