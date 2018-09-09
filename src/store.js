@@ -4,7 +4,7 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 
 const HACKER_NEWS_API_BASE_POINT = 'https://hacker-news.firebaseio.com/v0'
-const types = { HW_NEW_STORES: 'HW_NEW_STORES', APP_SET_TITLE: 'APP_SET_TITLE' }
+const types = { HW_NEW_STORES: 'HW_NEW_STORES', HW_GET_STORE: 'HW_GET_STORE', APP_SET_TITLE: 'APP_SET_TITLE' }
 
 const state = {
   title: '',
