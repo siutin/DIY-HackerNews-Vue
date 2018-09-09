@@ -60,7 +60,6 @@ const mutations = {
 
   },
   [types.HW_GET_STORE] (state, payload) {
-    console.log(types.HW_GET_STORE)
     const { id, callback } = payload
     const store = window.localStorage.getItem(`store-${id}`)
 
@@ -73,13 +72,13 @@ const mutations = {
         callback(JSON.parse(store))
       }
     } else {
+      console.log('fetch newstories')
       fetch(`${HACKER_NEWS_API_BASE_POINT}/item/${id}.json`)
         .then(res => res.json())
         .then(data => new Promise((resolve, reject) =>
          !Vue._.isEmpty(data) ? resolve(data) : reject(new Error('data is empty'))
         ))
         .then(data => {
-          console.log(`state.stores last: ${JSON.stringify(_.last(state.stores))}`)
           Vue.set(state, 'stores', [...state.stores, data])
           window.localStorage.setItem(`store-${id}`, JSON.stringify(data))
           window.localStorage.setItem(`store-${id}#last_updated_at`, moment().toISOString())
@@ -101,7 +100,6 @@ const actions = {
     commit(types.HW_NEW_STORES, payload)
   },
   syncHWStore ({ commit }, payload) {
-    console.log(payload);
     commit(types.HW_GET_STORE, payload)
   },
   setAppTitle ({ commit }, payload) {
