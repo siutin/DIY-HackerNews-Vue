@@ -11,7 +11,7 @@
      <v-card-title class="static" @click="onClickStatic">
        <div class="static">
          <div class="">{{ item.title }}</div>
-         <span class="grey--text">{{ getPostedAt }} | @{{ item.by }} </span>
+         <span class="grey--text">{{ getPostedAt }} | @{{ item.by }} | {{ getCommentCount }} comments </span>
        </div>
      </v-card-title>
      <transition name="expand">
@@ -42,9 +42,8 @@ export default {
     }
   },
   computed: {
-    getPostedAt () {
-      return moment.unix(this.item.time).fromNow()
-    }
+    getPostedAt () { return moment.unix(this.item.time).fromNow()},
+    getCommentCount () { return this.item.descendants }
   },
   methods: {
     onApiComplete (data) {
