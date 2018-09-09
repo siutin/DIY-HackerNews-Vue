@@ -64,21 +64,13 @@ export default {
 </script>
 
 <style scoped lang="scss">
+
   .row-item {
     position: relative;
   }
-  .visit-link {
-    background-color: green;
-    font-size: 0;
-    width: 100px;
+
+  .wrapper {
     display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .visit-link-text {
-    color: white;
-    font-size: 25pt;
-    text-align: center;
   }
 
   .v-card__title {
@@ -86,18 +78,31 @@ export default {
     width: 100%;
     padding: 10pt 20pt 10pt 20pt !important;
   }
-  .wrapper {
+
+  .visit-link {
+    background-color: green;
+    font-size: 0;
+    width: 100px;
     display: flex;
+    justify-content: center;
+    align-items: center;
+
+    & > .text {
+      color: white;
+      font-size: 25pt;
+      text-align: center;
+      text-decoration: none;
+    }
   }
 
   .expand-enter-active, .expand-leave-active {
      transition: all 0.2s ease;
-     max-width: 100px;
+     width: 100px;
      opacity: 1;
   }
   .expand-enter, .expand-leave-to /* .fade-leave-active below version 2.1.8 */ {
      transition: all 0.2s ease;
-     max-width: 0px;
+     width: 0;
      opacity: 0;
   }
 </style>
