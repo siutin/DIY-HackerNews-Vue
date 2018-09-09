@@ -8,7 +8,7 @@
      <transition name="expand">
          <div v-if="showVisitLink" class="visit-link"><div class="visit-link-text">Go</div></div>
      </transition>
-     <v-card-title class="static">
+     <v-card-title class="static" @click="onClickStatic">
        <div class="static">
          <div class="">{{ item.title }}</div>
          <span class="grey--text">{{ getPostedAt }} | @{{ item.by }} | {{ swipeDirection }} </span>
@@ -64,6 +64,10 @@ export default {
         this.showVisitLink = false
         this.showDiscussLink = false
       }
+    },
+    onClickStatic (e) {
+      this.showVisitLink = false
+      this.showDiscussLink = false
     }
   },
   created () {
