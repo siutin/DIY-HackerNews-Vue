@@ -16,7 +16,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import MugenScroll from 'vue-mugen-scroll'
 import { mapGetters } from 'vuex'
 import RowItem from '@/components/RowItem.vue'
@@ -36,7 +35,7 @@ export default {
       'getStoreIds'
     ]),
     getPaginatedIds () {
-      return this.getStoreIds.sort().reverse().slice(0, this.getMaxRowsPerPage * this.maxScrolledPage)
+      return this.getStoreIds.slice().sort().reverse().slice(0, this.getMaxRowsPerPage * this.maxScrolledPage)
     },
     getMaxRowsPerPage () {
       return Math.ceil((window.innerHeight - 56) / rowHeight)
