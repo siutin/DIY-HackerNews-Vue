@@ -14,6 +14,9 @@
          <span class="grey--text">{{ getPostedAt }} | @{{ item.by }} | {{ swipeDirection }} </span>
        </div>
      </v-card-title>
+     <transition name="expand">
+         <div v-if="showDiscussLink" class="discuss-link"><router-link :to="{ name: 'store', params: { id: this.id }}" class="text">Discuss</router-link></div>
+     </transition>
    </div>
 
   </v-card>
@@ -34,6 +37,7 @@ export default {
     return {
       swipeDirection: 'None',
       showVisitLink: false,
+      showDiscussLink: false,
       item: {}
     }
   },
@@ -51,8 +55,14 @@ export default {
       this.swipeDirection = direction
       if (direction == 'Right') {
         this.showVisitLink = true
+        this.showDiscussLink = false
+
+      } else if (direction == 'Left') {
+        this.showDiscussLink = true
+        this.showVisitLink = false
       } else {
         this.showVisitLink = false
+        this.showDiscussLink = false
       }
     }
   },
@@ -90,6 +100,22 @@ export default {
     & > .text {
       color: white;
       font-size: 25pt;
+      text-align: center;
+      text-decoration: none;
+    }
+  }
+
+  .discuss-link {
+    background-color: orange;
+    font-size: 0;
+    width: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    & > .text {
+      color: white;
+      font-size: 15pt;
       text-align: center;
       text-decoration: none;
     }
