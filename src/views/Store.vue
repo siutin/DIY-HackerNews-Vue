@@ -2,8 +2,8 @@
   <div class="store">
     <v-progress-circular v-if="loading" :indeterminate="true"></v-progress-circular>
     <v-list subheader three-line>
-      <v-subheader>{{ item.title }}</v-subheader>
       <div class="content">
+          <div>{{ item.title }}</div>
           <div v-html="item.text"></div>
           <!-- <div>{{ this.getKids }}</div>
           <div>{{ orderedIds }}</div> -->
@@ -114,8 +114,11 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  .content {
-    padding: 10pt;
-    line-height: 1.5;
+  .store {
+    .content {
+      line-height: 1.5;
+      padding: 10pt;
+    }
   }
+
 </style>
