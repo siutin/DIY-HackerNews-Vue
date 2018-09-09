@@ -23,7 +23,7 @@ const mutations = {
     const newstories = window.localStorage.getItem(`${types.HW_NEW_STORES}`)
 
     const lastUpdatedAt = window.localStorage.getItem(`${types.HW_NEW_STORES}#last_updated_at`)
-    const useCache = moment().add(1, 'minutes').isAfter(moment(last_updated_at))
+    const useCache = moment().add(1, 'minutes').isAfter(moment(lastUpdatedAt))
     console.log(`${types.HW_NEW_STORES} - useCache: ${useCache}`)
 
     if (newstories && useCache) {
@@ -63,7 +63,7 @@ const mutations = {
     const store = window.localStorage.getItem(`store-${id}`)
 
     const lastUpdatedAt = window.localStorage.getItem(`store-${id}#last_updated_at`)
-    const useCache = moment().add(1, 'minutes').isAfter(moment(last_updated_at))
+    const useCache = moment().add(1, 'minutes').isAfter(moment(lastUpdatedAt))
     console.log(`${types.HW_GET_STORE} - store-${id} - useCache: ${useCache}`)
 
     if (store && useCache) {
