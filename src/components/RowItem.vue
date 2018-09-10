@@ -9,7 +9,7 @@
       <div class="discuss-link"><router-link :to="{ name: 'store', params: { id: this.id }}" class="text">Discuss</router-link></div>
    </v-layout>
    <transition name="expand">
-    <v-card-title class="static" @click="resetState" :style="{ 'left': `${staticLeft}px`, 'width': `${getClientWidth}px`}">
+    <v-card-title :class="getStaticClasses" @click="resetState" :style="{ 'width': `${getClientWidth}px`}">
       <div class="static">
         <div class="">{{ item.title }}</div>
         <span class="grey--text">{{ getPostedAt }} | @{{ item.by }} | {{ getCommentCount }} comments </span>
@@ -20,6 +20,7 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import moment from 'moment'
 
 export default {
@@ -35,7 +36,7 @@ export default {
       swipeDirection: 'None',
       showVisitLink: false,
       showDiscussLink: false,
-      staticLeft: 0,
+      staticClasses: ['static'],
       item: {}
     }
   },
@@ -53,7 +54,8 @@ export default {
   computed: {
     getPostedAt () { return moment.unix(this.item.time).fromNow() },
     getCommentCount () { return this.item.descendants },
-    getClientWidth () { return document.body.clientWidth }
+    getClientWidth () { return document.body.clientWidth },
+    getStaticClasses () { return this.staticClasses }
   },
   methods: {
     onApiComplete (data) {
@@ -62,29 +64,38 @@ export default {
     },
     onSwipe (direction) {
       this.swipeDirection = direction
+      let i, j
       if (direction === 'Right') {
-        if (!this.showVisitLink) {
-          this.showVisitLink = true
-          this.showDiscussLink = false
-          this.staticLeft = 100
-        } else {
-          this.showVisitLink = false
-          this.showDiscussLink = false
-          this.staticLeft = 0
+
+        Vue._.each(['hide-visit-link', 'hide-discuss-link'], name => {
+          let k = this.staticClasses.indexOf(name)
+          if (k !== -1) this.staticClasses.splice(k, 1)
+        })
+
+        let [i, j] = [ this.staticClasses.indexOf('show-discuss-link'), this.staticClasses.indexOf('show-visit-link') ]
+        if (i === -1 && j === -1) {
+          this.staticClasses.push('show-visit-link')
+        } else if (i !== -1) {
+          this.staticClasses.splice(i, 1)
+          this.staticClasses.push('hide-discuss-link')
         }
+
       } else if (direction === 'Left') {
-         if (!this.showDiscussLink) {
-          this.showDiscussLink = true
-          this.showVisitLink = false
-          this.staticLeft = -100
-        } else {
-          this.showVisitLink = false
-          this.staticLeft = 0
+
+        Vue._.each(['hide-visit-link', 'hide-discuss-link'], name => {
+          let k = this.staticClasses.indexOf(name)
+          if (k !== -1) this.staticClasses.splice(k, 1)
+        })
+
+        let [i, j] = [ this.staticClasses.indexOf('show-visit-link'), this.staticClasses.indexOf('show-discuss-link') ]
+        if (i === -1 && j === -1) {
+          this.staticClasses.push('show-discuss-link')
+        } else if (i !== -1) {
+          this.staticClasses.splice(j, 1)
+          this.staticClasses.push('hide-visit-link')
         }
+
       } else {
-          this.showVisitLink = false
-          this.showDiscussLink = false
-          this.staticLeft = 0
       }
     },
     resetState (e) {
@@ -118,15 +129,61 @@ export default {
   }
 
   .v-card__title.static {
-    margin-top: -60px;
+    margin-top: -85px;
     position: relative;
     background-color: white;
+  }
+
+  .static.show-visit-link,
+  .static.hide-visit-link,
+  .static.show-discuss-link,
+  .static.hide-discuss-link {
+    animation-duration:0.5s;
+    animation-timing-function:cubic-bezier(0.165, 0.84, 0.44, 1);
+    animation-fill-mode: forwards;
+  }
+
+  .static.show-visit-link {
+    animation-name: show-visit-link;
+  }
+
+  .static.hide-visit-link {
+    animation-name: hide-visit-link;
+  }
+
+  .static.show-discuss-link {
+    animation-name: show-discuss-link;
+  }
+
+  .static.hide-discuss-link {
+    animation-name: hide-discuss-link;
+  }
+
+  @keyframes show-visit-link {
+    from { left: 0; }
+    to { left: 100px; }
+  }
+
+  @keyframes hide-visit-link {
+    from { left: 100px; }
+    to { left: 0; }
+  }
+
+  @keyframes show-discuss-link {
+    from { left: 0; }
+    to { left: -100px; }
+  }
+
+  @keyframes hide-discuss-link {
+    from { left: -100px; }
+    to { left: 0; }
   }
 
   .visit-link {
     background-color: green;
     font-size: 0;
     width: 100px;
+    height: 85px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -154,13 +211,4 @@ export default {
       text-decoration: none;
     }
   }
-
-  .expand-enter-active, .expand-leave-active {
-     transition: margin-left 0.2s ease;
-    //  width: 100px;
-  }
-  .expand-enter, .expand-leave-to /* .fade-leave-active below version 2.1.8 */ {
-     transition: margin-left 0.2s ease;
-    //  width: 0;
-  }
-</style>
+  </style>
