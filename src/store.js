@@ -5,7 +5,8 @@ import moment from 'moment'
 Vue.use(Vuex)
 
 const HACKER_NEWS_API_BASE_POINT = 'https://hacker-news.firebaseio.com/v0'
-const types = { HW_NEW_STORES: 'HW_NEW_STORES', HW_GET_STORE: 'HW_GET_STORE', APP_SET_TITLE: 'APP_SET_TITLE' }
+const types = { HW_NEW_STORES: 'HW_NEW_STORES', HW_GET_STORE: 'HW_GET_STORE', APP_SET_TITLE: 'APP_SET_TITLE', APP_SET_ACTIVE_SCOPE: 'APP_SET_ACTIVE_SCOPE' }
+const scopeValues = ['new', 'top', 'best']
 
 const state = {
   title: '',
@@ -18,6 +19,8 @@ const getters = {
   getStoreIds: state => state.storeIds,
   getStores: state => state.stores,
   getTitle: state => state.title,
+  getScopeValues: state => scopeValues,
+  getActiveScope: (state, getters) => scopeValues[getters.getActiveScopeIndex],
   getActiveScopeIndex: state => state.activeScopeIndex
 }
 const mutations = {
@@ -94,6 +97,16 @@ const mutations = {
     console.log(types.APP_SET_TITLE)
     const { title } = payload
     state.title = title
+  },
+  [types.APP_SET_ACTIVE_SCOPE] (state, payload) {
+    console.log(types.APP_SET_ACTIVE_SCOPE)
+    const { name } = payload
+    if (name) {
+      let index = scopeValues.indexOf(name)
+      if (index != -1) {
+        state.activeScopeIndex = index
+      }
+    }
   }
 }
 const actions = {
@@ -105,6 +118,9 @@ const actions = {
   },
   setAppTitle ({ commit }, payload) {
     commit(types.APP_SET_TITLE, payload)
+  },
+  setActiveScope ({ commit }, payload) {
+    commit(types.APP_SET_ACTIVE_SCOPE, payload)
   }
 }
 
