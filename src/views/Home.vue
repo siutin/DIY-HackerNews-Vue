@@ -32,7 +32,9 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'getStoreIds'
+      'getActiveScope',
+      'getStoreIds',
+      'getActiveScopeIndex'
     ]),
     getPaginatedIds () {
       return this.getStoreIds.slice().sort().reverse().slice(0, this.getMaxRowsPerPage * this.maxScrolledPage)
@@ -46,8 +48,11 @@ export default {
       console.log('onRefreshClicked')
       this.updateData(this)
     },
-    syncData (vm) {
-      vm.$store.dispatch('syncHWNewStoreIDs')
+    syncData (vm, name) {
+      vm.$store.dispatch('syncHWNewStoreIDs', { name })
+    },
+    setActiveScope(vm, name) {
+      vm.$store.dispatch('setActiveScope', { name })
     },
     updateScrollPage () {
       console.log(`updateScrollPage`)
@@ -57,10 +62,17 @@ export default {
     }
   },
   beforeRouteEnter (to, from, next) {
-    next(vm => vm.syncData(vm))
+    let name = to.params.name
+    next(vm => {
+      vm.setActiveScope(vm, name)
+      vm.syncData(vm, name)
+    })
   },
   beforeRouteUpdate (to, from, next) {
-    next(vm => vm.syncData(vm))
+    let name = to.params.name
+    this.setActiveScope(this, name)
+    this.syncData(this, name)
+    next()
   },
   mounted () {
     this.updateScrollPage()

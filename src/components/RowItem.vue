@@ -41,6 +41,11 @@ export default {
       item: {}
     }
   },
+  watch: {
+    id (newVal, oldVal) {
+      this.$store.dispatch('syncHWStore', { id: this.id, callback: this.onApiComplete })
+    }
+  },
   computed: {
     getPostedAt () { return moment.unix(this.item.time).fromNow() },
     getCommentCount () { return this.item.descendants }

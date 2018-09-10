@@ -6,62 +6,73 @@ Vue.use(Vuex)
 
 const HACKER_NEWS_API_BASE_POINT = 'https://hacker-news.firebaseio.com/v0'
 const types = { HW_NEW_STORES: 'HW_NEW_STORES', HW_GET_STORE: 'HW_GET_STORE', APP_SET_TITLE: 'APP_SET_TITLE', APP_SET_ACTIVE_SCOPE: 'APP_SET_ACTIVE_SCOPE' }
+const urls = { 'new': 'newstories', 'top': 'topstories', 'best': 'beststories' }
 const scopeValues = ['new', 'top', 'best']
 
 const state = {
   title: '',
-  storeIds: [],
   activeScopeIndex: 0,
+  storeIds: {
+    new: [],
+    top: [],
+    best: [],
+  },
   stores: []
 }
 
 const getters = {
-  getStoreIds: state => state.storeIds,
+  getStoreIds: (state, getters) =>state.storeIds[`${scopeValues[getters.getActiveScopeIndex]}`],
   getStores: state => state.stores,
   getTitle: state => state.title,
   getScopeValues: state => scopeValues,
   getActiveScope: (state, getters) => scopeValues[getters.getActiveScopeIndex],
   getActiveScopeIndex: state => state.activeScopeIndex
 }
-const mutations = {
-  [types.HW_NEW_STORES] (state, payload) {
-    const newstories = window.localStorage.getItem(`${types.HW_NEW_STORES}`)
 
-    const lastUpdatedAt = window.localStorage.getItem(`${types.HW_NEW_STORES}#last_updated_at`)
-    const useCache = moment().add(1, 'minutes').isAfter(moment(lastUpdatedAt))
-    console.log(`${types.HW_NEW_STORES} - useCache: ${useCache}`)
+const getStores = (state, STORY_TYPE, name ,callback) => {
+  const hwStores = window.localStorage.getItem(STORY_TYPE)
+  const lastUpdatedAt = window.localStorage.getItem(`${STORY_TYPE}#last_updated_at`)
+  const useCache = moment().add(1, 'minutes').isAfter(moment(lastUpdatedAt))
+  console.log(`${STORY_TYPE} - useCache: ${useCache} hwStores: ${(hwStores || []).length}`)
 
-    if (newstories && useCache) {
-      const data = JSON.parse(newstories)
-      Vue._.each(data, storeId => {
-        if (state.storeIds.indexOf(storeId) === -1) {
-          Vue.set(state, 'storeIds', [...state.storeIds, storeId])
-        }
-      })
-      if (typeof (payload) === 'function') {
-        payload()
+  if (hwStores && useCache) {
+    const data = JSON.parse(hwStores)
+    Vue._.each(data, storeId => {
+      if (state.storeIds[name].indexOf(storeId) === -1) {
+        Vue.set(state.storeIds, name, [...state.storeIds[name], storeId])
       }
-    } else {
-      console.log('fetch newstories')
-      fetch(`${HACKER_NEWS_API_BASE_POINT}/newstories.json`)
-        .then(res => res.json())
-        .then(data => new Promise((resolve, reject) =>
-          Vue._.isArray(data) && !Vue._.isEmpty(data) ? resolve(data) : reject(new Error())
-        ))
-        .then(data => {
-          window.localStorage.setItem(`${types.HW_NEW_STORES}`, JSON.stringify(data))
-          window.localStorage.setItem(`${types.HW_NEW_STORES}#last_updated_at`, moment().toISOString())
-
-          Vue._.each(data, storeId => {
-            if (state.storeIds.indexOf(storeId) === -1) {
-              Vue.set(state, 'storeIds', [...state.storeIds, storeId])
-            }
-          })
-          if (typeof (payload) === 'function') {
-            payload()
-          }
-        }).catch(console.error)
+    })
+    if (typeof (callback) === 'function') {
+      callback(data)
     }
+  } else {
+    console.log(`fetch hwStores -> ${urls[name]}`)
+    fetch(`${HACKER_NEWS_API_BASE_POINT}/${urls[name]}.json`)
+      .then(res => res.json())
+      .then(data => new Promise((resolve, reject) =>
+        Vue._.isArray(data) && !Vue._.isEmpty(data) ? resolve(data) : reject(new Error())
+      ))
+      .then(data => {
+        window.localStorage.setItem(STORY_TYPE, JSON.stringify(data))
+        window.localStorage.setItem(`${STORY_TYPE}#last_updated_at`, moment().toISOString())
+
+        Vue._.each(data, storeId => {
+          if (state.storeIds[name].indexOf(storeId) === -1) {
+            Vue.set(state.storeIds, name, [...state.storeIds[name], storeId])
+          }
+        })
+        if (typeof (callback) === 'function') {
+          callback(data)
+        }
+      }).catch(console.error)
+  }
+}
+
+const mutations = {
+  [types.HW_NEW_STORES] (state, { payload, getters }) {
+    const { name, callback } = payload
+    let nname = name || getters.getActiveScope
+    getStores(state, `HW_${nname.toUpperCase()}`, nname, callback)
   },
   [types.HW_GET_STORE] (state, payload) {
     const { id, callback } = payload
@@ -110,8 +121,8 @@ const mutations = {
   }
 }
 const actions = {
-  syncHWNewStoreIDs ({ commit }, payload) {
-    commit(types.HW_NEW_STORES, payload)
+  syncHWNewStoreIDs ({ commit, getters }, payload) {
+    commit(types.HW_NEW_STORES, { payload, getters })
   },
   syncHWStore ({ commit }, payload) {
     commit(types.HW_GET_STORE, payload)
