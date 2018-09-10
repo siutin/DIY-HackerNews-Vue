@@ -6,9 +6,9 @@
     <v-progress-linear v-if="_.isEmpty(item)" :indeterminate="true"></v-progress-linear>
    <div class="wrapper">
      <transition name="expand">
-         <div v-if="showVisitLink" class="visit-link"><div @click="onClickVisitLink" class="text">Go</div></div>
+         <div v-if="showVisitLink" class="visit-link"><div @click="openVistLink" class="text">Go</div></div>
      </transition>
-     <v-card-title class="static" @click="onClickStatic">
+     <v-card-title class="static" @click="resetState">
        <div class="static">
          <div class="">{{ item.title }}</div>
          <span class="grey--text">{{ getPostedAt }} | @{{ item.by }} | {{ getCommentCount }} comments </span>
@@ -46,7 +46,7 @@ export default {
       this.$store.dispatch('syncHWStore', {
           id: this.id, callback: (data) => {
             this.onApiComplete(data)
-            this.onClickStatic()
+            this.resetState()
           }
        })
     }
@@ -73,12 +73,12 @@ export default {
         this.showDiscussLink = false
       }
     },
-    onClickStatic (e) {
+    resetState (e) {
       this.showVisitLink = false
       this.showDiscussLink = false
     },
-    onClickVisitLink (e) {
-      console.log(`onClickVisitLink - id: ${this.id}`)
+    openVistLink (e) {
+      console.log(`openVistLink - id: ${this.id}`)
       if (this.item && this.item.url) {
         window.location.href = this.item.url
       }
