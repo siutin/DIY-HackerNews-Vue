@@ -4,21 +4,18 @@
       right: () => onSwipe('Right')
     }">
     <v-progress-linear v-if="_.isEmpty(item)" :indeterminate="true"></v-progress-linear>
-   <div class="wrapper">
-     <transition name="expand">
-         <div v-if="showVisitLink" class="visit-link"><div @click="openVistLink" class="text">Go</div></div>
-     </transition>
-     <v-card-title class="static" @click="resetState">
-       <div class="static">
-         <div class="">{{ item.title }}</div>
-         <span class="grey--text">{{ getPostedAt }} | @{{ item.by }} | {{ getCommentCount }} comments </span>
-       </div>
-     </v-card-title>
-     <transition name="expand">
-         <div v-if="showDiscussLink" class="discuss-link"><router-link :to="{ name: 'store', params: { id: this.id }}" class="text">Discuss</router-link></div>
-     </transition>
-   </div>
-
+   <v-layout row justify-space-between>
+      <div class="visit-link"><div @click="openVistLink" class="text">Go</div></div>
+      <div class="discuss-link"><router-link :to="{ name: 'store', params: { id: this.id }}" class="text">Discuss</router-link></div>
+   </v-layout>
+   <transition name="expand">
+    <v-card-title class="static" @click="resetState" :style="{ 'left': `${staticLeft}px`, 'width': `${getClientWidth}px`}">
+      <div class="static">
+        <div class="">{{ item.title }}</div>
+        <span class="grey--text">{{ getPostedAt }} | @{{ item.by }} | {{ getCommentCount }} comments </span>
+      </div>
+    </v-card-title>
+    </transition>
   </v-card>
 </template>
 
@@ -38,6 +35,7 @@ export default {
       swipeDirection: 'None',
       showVisitLink: false,
       showDiscussLink: false,
+      staticLeft: 0,
       item: {}
     }
   },
@@ -54,7 +52,8 @@ export default {
   },
   computed: {
     getPostedAt () { return moment.unix(this.item.time).fromNow() },
-    getCommentCount () { return this.item.descendants }
+    getCommentCount () { return this.item.descendants },
+    getClientWidth () { return document.body.clientWidth }
   },
   methods: {
     onApiComplete (data) {
@@ -64,27 +63,35 @@ export default {
     onSwipe (direction) {
       this.swipeDirection = direction
       if (direction === 'Right') {
-        if (this.showDiscussLink == true) {
-          this.showDiscussLink = false
-        } else {
+        if (!this.showVisitLink) {
           this.showVisitLink = true
           this.showDiscussLink = false
+          this.staticLeft = 100
+        } else {
+          this.showVisitLink = false
+          this.showDiscussLink = false
+          this.staticLeft = 0
         }
       } else if (direction === 'Left') {
-        if (this.showVisitLink == true) {
-          this.showVisitLink = false
-        } else {
+         if (!this.showDiscussLink) {
           this.showDiscussLink = true
           this.showVisitLink = false
+          this.staticLeft = -100
+        } else {
+          this.showVisitLink = false
+          this.staticLeft = 0
         }
       } else {
-        this.showVisitLink = false
-        this.showDiscussLink = false
+          this.showVisitLink = false
+          this.showDiscussLink = false
+          this.staticLeft = 0
       }
     },
     resetState (e) {
+      console.log(`resetState`)
       this.showVisitLink = false
       this.showDiscussLink = false
+      this.staticLeft = 0
     },
     openVistLink (e) {
       console.log(`openVistLink - id: ${this.id}`)
@@ -110,10 +117,10 @@ export default {
     display: flex;
   }
 
-  .v-card__title {
+  .v-card__title.static {
+    margin-top: -60px;
+    position: relative;
     background-color: white;
-    width: 100%;
-    padding: 10pt 20pt 10pt 20pt !important;
   }
 
   .visit-link {
@@ -149,11 +156,11 @@ export default {
   }
 
   .expand-enter-active, .expand-leave-active {
-     transition: all 0.2s ease;
-     width: 100px;
+     transition: margin-left 0.2s ease;
+    //  width: 100px;
   }
   .expand-enter, .expand-leave-to /* .fade-leave-active below version 2.1.8 */ {
-     transition: all 0.2s ease;
-     width: 0;
+     transition: margin-left 0.2s ease;
+    //  width: 0;
   }
 </style>

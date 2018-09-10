@@ -1,18 +1,18 @@
 <template>
-  <v-card class="home">
-    <v-container fluid grid-list-lg>
-      <v-slide-y-transition mode="out-in">
-        <v-layout row wrap align-center justify-center>
-         <v-flex xs12 v-for="(id, index) in getPaginatedIds" :key="index">
-           <row-item :index="index" :id="id" :max-scrolled-page="maxScrolledPage" :max-rows-per-page="getMaxRowsPerPage" />
-         </v-flex>
-         <mugen-scroll :handler="updateScrollPage" :should-handle="!loading">
-           <v-progress-circular :indeterminate="true"></v-progress-circular>
-         </mugen-scroll>
+  <v-slide-y-transition mode="out-in">
+    <div class="home">
+      <v-list>
+        <template v-for="(id, index) in getPaginatedIds">
+          <row-item :index="index" :id="id" :max-scrolled-page="maxScrolledPage" :max-rows-per-page="getMaxRowsPerPage" v-bind:key="index" />
+        </template>
+        <v-layout align-center justify-center>
+          <mugen-scroll :handler="updateScrollPage" :should-handle="!loading">
+            <v-progress-circular :indeterminate="true"></v-progress-circular>
+          </mugen-scroll>
         </v-layout>
-      </v-slide-y-transition>
-    </v-container>
-  </v-card>
+      </v-list>
+    </div>
+  </v-slide-y-transition>
 </template>
 
 <script>
@@ -40,7 +40,7 @@ export default {
       return this.getStoreIds.slice().sort().reverse().slice(0, this.getMaxRowsPerPage * this.maxScrolledPage)
     },
     getMaxRowsPerPage () {
-      return Math.ceil((window.innerHeight - 56) / rowHeight)
+      return Math.ceil((window.innerHeight - 56) / rowHeight) + 1
     }
   },
   methods: {
@@ -85,7 +85,7 @@ export default {
 <style scoped>
 
 .home {
-   overflow-x: hidden;
+   overflow: hidden;
 }
 
 </style>
