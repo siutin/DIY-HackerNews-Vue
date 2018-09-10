@@ -51,7 +51,7 @@ export default {
     syncData (vm, name) {
       vm.$store.dispatch('syncHWNewStoreIDs', { name })
     },
-    setActiveScope(vm, name) {
+    setActiveScope (vm, name) {
       vm.$store.dispatch('setActiveScope', { name })
     },
     updateScrollPage () {

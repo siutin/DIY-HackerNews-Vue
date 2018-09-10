@@ -5,8 +5,17 @@ import moment from 'moment'
 Vue.use(Vuex)
 
 const HACKER_NEWS_API_BASE_POINT = 'https://hacker-news.firebaseio.com/v0'
-const types = { HW_NEW_STORES: 'HW_NEW_STORES', HW_GET_STORE: 'HW_GET_STORE', APP_SET_TITLE: 'APP_SET_TITLE', APP_SET_ACTIVE_SCOPE: 'APP_SET_ACTIVE_SCOPE' }
-const urls = { 'new': 'newstories', 'top': 'topstories', 'best': 'beststories' }
+const types = {
+  HW_NEW_STORES: 'HW_NEW_STORES',
+  HW_GET_STORE: 'HW_GET_STORE',
+  APP_SET_TITLE: 'APP_SET_TITLE',
+  APP_SET_ACTIVE_SCOPE: 'APP_SET_ACTIVE_SCOPE'
+}
+const urls = {
+  'new': 'newstories',
+  'top': 'topstories',
+  'best': 'beststories'
+}
 const scopeValues = ['new', 'top', 'best']
 
 const state = {
@@ -21,7 +30,7 @@ const state = {
 }
 
 const getters = {
-  getStoreIds: (state, getters) =>state.storeIds[`${scopeValues[getters.getActiveScopeIndex]}`],
+  getStoreIds: (state, getters) => state.storeIds[`${scopeValues[getters.getActiveScopeIndex]}`],
   getStores: state => state.stores,
   getTitle: state => state.title,
   getScopeValues: state => scopeValues,
@@ -29,7 +38,7 @@ const getters = {
   getActiveScopeIndex: state => state.activeScopeIndex
 }
 
-const getStores = (state, STORY_TYPE, name ,callback) => {
+const getStores = (state, STORY_TYPE, name, callback) => {
   const hwStores = window.localStorage.getItem(STORY_TYPE)
   const lastUpdatedAt = window.localStorage.getItem(`${STORY_TYPE}#last_updated_at`)
   const useCache = moment().add(1, 'minutes').isAfter(moment(lastUpdatedAt))
@@ -69,13 +78,22 @@ const getStores = (state, STORY_TYPE, name ,callback) => {
 }
 
 const mutations = {
-  [types.HW_NEW_STORES] (state, { payload, getters }) {
-    const { name, callback } = payload
+  [types.HW_NEW_STORES](state, {
+    payload,
+    getters
+  }) {
+    const {
+      name,
+      callback
+    } = payload
     let nname = name || getters.getActiveScope
     getStores(state, `HW_${nname.toUpperCase()}`, nname, callback)
   },
-  [types.HW_GET_STORE] (state, payload) {
-    const { id, callback } = payload
+  [types.HW_GET_STORE](state, payload) {
+    const {
+      id,
+      callback
+    } = payload
     const store = window.localStorage.getItem(`store-${id}`)
 
     const lastUpdatedAt = window.localStorage.getItem(`store-${id}#last_updated_at`)
@@ -104,14 +122,18 @@ const mutations = {
         }).catch(err => console.error(err.message))
     }
   },
-  [types.APP_SET_TITLE] (state, payload) {
+  [types.APP_SET_TITLE](state, payload) {
     console.log(types.APP_SET_TITLE)
-    const { title } = payload
+    const {
+      title
+    } = payload
     state.title = title
   },
-  [types.APP_SET_ACTIVE_SCOPE] (state, payload) {
+  [types.APP_SET_ACTIVE_SCOPE](state, payload) {
     console.log(types.APP_SET_ACTIVE_SCOPE)
-    const { name } = payload
+    const {
+      name
+    } = payload
     if (name) {
       let index = scopeValues.indexOf(name)
       if (index != -1) {
@@ -121,16 +143,28 @@ const mutations = {
   }
 }
 const actions = {
-  syncHWNewStoreIDs ({ commit, getters }, payload) {
-    commit(types.HW_NEW_STORES, { payload, getters })
+  syncHWNewStoreIDs({
+    commit,
+    getters
+  }, payload) {
+    commit(types.HW_NEW_STORES, {
+      payload,
+      getters
+    })
   },
-  syncHWStore ({ commit }, payload) {
+  syncHWStore({
+    commit
+  }, payload) {
     commit(types.HW_GET_STORE, payload)
   },
-  setAppTitle ({ commit }, payload) {
+  setAppTitle({
+    commit
+  }, payload) {
     commit(types.APP_SET_TITLE, payload)
   },
-  setActiveScope ({ commit }, payload) {
+  setActiveScope({
+    commit
+  }, payload) {
     commit(types.APP_SET_ACTIVE_SCOPE, payload)
   }
 }

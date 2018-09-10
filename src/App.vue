@@ -44,7 +44,7 @@ export default {
     return {
       toggleTheme: false,
       title: 'Hacker News',
-      scopeTitles: [ 'New', 'Top', 'Best']
+      scopeTitles: ['New', 'Top', 'Best']
     }
   },
   computed: {
@@ -57,7 +57,7 @@ export default {
     onScopeClick (e, item, i) {
       console.log(`onScopeClick - item: ${item} i: ${i}`)
       let name = item.toLowerCase()
-      this.$router.push({ name: 'scopes', params: { name }})
+      this.$router.push({ name: 'scopes', params: { name } })
     }
   }
 }
