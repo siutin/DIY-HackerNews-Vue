@@ -12,6 +12,11 @@ export default new Router({
       component: Home
     },
     {
+      path: '/:name',
+      name: 'scopes',
+      component: Home
+    },
+    {
       path: '/store/:id',
       name: 'store',
       component: () => import(/* webpackChunkName: "store" */ './views/Store.vue')

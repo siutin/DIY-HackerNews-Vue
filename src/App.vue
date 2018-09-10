@@ -6,16 +6,16 @@
     >
       <v-menu :nudge-width="100">
        <v-toolbar-title slot="activator">
-         <span>All</span>
+         <span>{{ scopeTitles[getActiveScopeIndex] }}</span>
          <v-icon>arrow_drop_down</v-icon>
        </v-toolbar-title>
 
        <v-list>
          <v-list-tile
-           v-for="item in items"
-           :key="item"
+           v-for="(scopeTitle, i) in scopeTitles"
+           :key="scopeTitle"
          >
-           <v-list-tile-title v-text="item"></v-list-tile-title>
+           <v-list-tile-title v-text="scopeTitle" @click="(e) => onScopeClick(e, scopeTitle, i)"></v-list-tile-title>
          </v-list-tile>
        </v-list>
      </v-menu>
@@ -36,20 +36,29 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'App',
   data () {
     return {
       toggleTheme: false,
-      items: [
-        'News', 'Threads', 'Comments', 'Show', 'Ask', 'Jobs'
-      ],
-      title: 'Hacker News'
+      title: 'Hacker News',
+      scopeTitles: [ 'New', 'Top', 'Best']
     }
   },
   computed: {
+    ...mapGetters([
+      'getActiveScopeIndex'
+    ]),
     getTitle () { return this.$store.getters.getTitle || this.title }
+  },
+  methods: {
+    onScopeClick (e, item, i) {
+      console.log(`onScopeClick - item: ${item} i: ${i}`)
+      let name = item.toLowerCase()
+      this.$router.push({ name: 'scopes', params: { name }})
+    }
   }
 }
 </script>

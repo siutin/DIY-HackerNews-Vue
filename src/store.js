@@ -10,13 +10,15 @@ const types = { HW_NEW_STORES: 'HW_NEW_STORES', HW_GET_STORE: 'HW_GET_STORE', AP
 const state = {
   title: '',
   storeIds: [],
+  activeScopeIndex: 0,
   stores: []
 }
 
 const getters = {
   getStoreIds: state => state.storeIds,
   getStores: state => state.stores,
-  getTitle: state => state.title
+  getTitle: state => state.title,
+  getActiveScopeIndex: state => state.activeScopeIndex
 }
 const mutations = {
   [types.HW_NEW_STORES] (state, payload) {
