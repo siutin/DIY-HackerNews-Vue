@@ -5,15 +5,13 @@
       <div class="content">
           <div>{{ item.title }}</div>
           <div v-html="item.text"></div>
-          <!-- <div>{{ this.getKids }}</div>
-          <div>{{ orderedIds }}</div> -->
-          <span class="grey--text">@{{ item.by }} | {{ item.id }}</span>
+          <span class="grey--text">{{ formatPostedAt(item) }} | @{{ item.by }}</span>
       </div>
       <div v-for="(subItem, index) in getCleanUpSubItems" :key="index">
         <v-divider></v-divider>
         <div class="content" >
           <div v-html="subItem.text"></div>
-          <span class="grey--text">@{{ subItem.by }} | {{ subItem.id }}</span>
+          <span class="grey--text">{{ formatPostedAt(subItem) }} | @{{ subItem.by }}</span>
         </div>
       </div>
     </v-list>
@@ -37,7 +35,6 @@ export default {
     }
   },
   computed: {
-    getPostedAt () { return moment.unix(this.item.time).fromNow() },
     getKids () { return this.item.kids },
     getCleanUpSubItems () {
       return this.subItems.filter(subItem => !subItem.deleted).slice().sort((a, b) => {
@@ -46,6 +43,7 @@ export default {
     }
   },
   methods: {
+    formatPostedAt (item) { return moment.unix(item.time).fromNow() },
     onApiComplete (data) {
       console.log(`onApiComplete`)
       this.item = data
