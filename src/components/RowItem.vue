@@ -43,7 +43,12 @@ export default {
   },
   watch: {
     id (newVal, oldVal) {
-      this.$store.dispatch('syncHWStore', { id: this.id, callback: this.onApiComplete })
+      this.$store.dispatch('syncHWStore', {
+          id: this.id, callback: (data) => {
+            this.onApiComplete(data)
+            this.onClickStatic()
+          }
+       })
     }
   },
   computed: {
