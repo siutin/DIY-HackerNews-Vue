@@ -64,11 +64,19 @@ export default {
     onSwipe (direction) {
       this.swipeDirection = direction
       if (direction === 'Right') {
-        this.showVisitLink = true
-        this.showDiscussLink = false
+        if (this.showDiscussLink == true) {
+          this.showDiscussLink = false
+        } else {
+          this.showVisitLink = true
+          this.showDiscussLink = false
+        }
       } else if (direction === 'Left') {
-        this.showDiscussLink = true
-        this.showVisitLink = false
+        if (this.showVisitLink == true) {
+          this.showVisitLink = false
+        } else {
+          this.showDiscussLink = true
+          this.showVisitLink = false
+        }
       } else {
         this.showVisitLink = false
         this.showDiscussLink = false
@@ -143,11 +151,9 @@ export default {
   .expand-enter-active, .expand-leave-active {
      transition: all 0.2s ease;
      width: 100px;
-     opacity: 1;
   }
   .expand-enter, .expand-leave-to /* .fade-leave-active below version 2.1.8 */ {
      transition: all 0.2s ease;
      width: 0;
-     opacity: 0;
   }
 </style>
