@@ -13,9 +13,9 @@ export default new Router({
       component: Home
     },
     {
-      path: '/store/:id',
-      name: 'store',
-      component: () => import(/* webpackChunkName: "store" */ './views/Store.vue')
+      path: '/story/:id',
+      name: 'story',
+      component: () => import(/* webpackChunkName: "story" */ './views/Story.vue')
     },
     {
       path: '/about',

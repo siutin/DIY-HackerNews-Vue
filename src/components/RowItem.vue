@@ -8,7 +8,7 @@
             <div @click="openVistLink" class="text">Go</div>
           </div>
           <div class="discuss-link">
-            <router-link :to="{ name: 'store', params: { id: this.id }}" class="text">Discuss</router-link>
+            <router-link :to="{ name: 'story', params: { id: this.id }}" class="text">Discuss</router-link>
           </div>
         </div>
         <div class="static animate" :style="{ 'transform': `translateX(${staticX}px) translateY(-85px)`, 'width': `${getClientWidth}px`}">
@@ -44,7 +44,7 @@ export default {
   },
   watch: {
     id (newVal, oldVal) {
-      this.$store.dispatch('syncHWStore', {
+      this.$store.dispatch('syncHWStory', {
         id: this.id,
         callback: (data) => {
           this.onApiComplete(data)
@@ -84,7 +84,7 @@ export default {
   },
   created () {
     console.log(`RowItem - created`)
-    this.$store.dispatch('syncHWStore', { id: this.id, callback: this.onApiComplete })
+    this.$store.dispatch('syncHWStory', { id: this.id, callback: this.onApiComplete })
   }
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="store">
+  <div class="story">
     <v-progress-circular v-if="loading" :indeterminate="true"></v-progress-circular>
     <v-list subheader three-line>
       <div class="content">
@@ -9,7 +9,7 @@
       </div>
       <div v-for="(subItem, index) in getCleanUpSubItems" :key="index">
         <v-divider></v-divider>
-        <div class="content" >
+        <div class="content">
           <div v-html="subItem.text"></div>
           <span class="grey--text">{{ formatPostedAt(subItem) }} | @{{ subItem.by }}</span>
         </div>
@@ -23,7 +23,7 @@ import Vue from 'vue'
 import moment from 'moment'
 
 export default {
-  name: 'Store',
+  name: 'Story',
   components: {},
   data () {
     return {
@@ -50,13 +50,12 @@ export default {
       this.$store.dispatch('setAppTitle', {
         title: this.item.title
       })
-      this.loadding = false
+      this.loading = false
       Vue._.each(data.kids, kid => this.orderedIds.push(kid))
 
       this.walkThroughComments(data)
     },
     walkThroughComments (data) {
-      // console.log(`walkThroughComments parent: ${data.parent}`)
       if (data.id !== this.id) {
         let index = Vue._.findIndex(this.orderedIds, oid => oid === data.id)
         console.log(`index: ${index} id: ${data.id} parentId: ${data.parent} this.orderedIds: ${this.orderedIds}`)
@@ -72,15 +71,15 @@ export default {
       }
 
       Vue._.each(data.kids, kid => {
-        this.$store.dispatch('syncHWStore', {
+        this.$store.dispatch('syncHWStory', {
           id: kid,
           callback: this.walkThroughComments
         })
       })
     },
     syncData (vm) {
-      this.loadding = false
-      vm.$store.dispatch('syncHWStore', {
+      this.loading = false
+      vm.$store.dispatch('syncHWStory', {
         id: this.id,
         callback: this.onApiComplete
       })
@@ -113,7 +112,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  .store {
+  .story {
     .content {
       line-height: 1.5;
       padding: 10pt;

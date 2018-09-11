@@ -32,10 +32,10 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'getStoreIds'
+      'getStoryIds'
     ]),
     getPaginatedIds () {
-      return this.getStoreIds.slice().sort().reverse().slice(0, this.getMaxRowsPerPage * this.maxScrolledPage)
+      return this.getStoryIds.slice().sort().reverse().slice(0, this.getMaxRowsPerPage * this.maxScrolledPage)
     },
     getMaxRowsPerPage () {
       return Math.ceil((window.innerHeight - 56) / rowHeight) + 1
@@ -47,7 +47,7 @@ export default {
       this.updateData(this)
     },
     syncData (vm, name) {
-      vm.$store.dispatch('syncHWNewStoreIDs', { name })
+      vm.$store.dispatch('syncHWNewStoryIDs', { name })
     },
     setActiveScope (vm, name) {
       vm.$store.dispatch('setActiveScope', { name })
