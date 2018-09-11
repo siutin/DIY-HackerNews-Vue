@@ -2,7 +2,7 @@
   <v-card class="row-item" :id="`row-item${this.id}`">
     <v-progress-linear v-if="_.isEmpty(item)" :indeterminate="true"></v-progress-linear>
     <div class="wrapper" v-else>
-      <v-touch @swipeleft="onSwipeLeft" @swiperight="onSwipeRight" @tap="resetState">
+      <v-touch @swipeleft="onSwipeLeft" @swiperight="onSwipeRight" @tap="resetState" :swipe-options="{ direction: 'horizontal' }">
         <div>
           <div class="visit-link">
             <div @click="openVistLink" class="text">Go</div>
