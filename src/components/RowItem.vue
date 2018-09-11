@@ -1,24 +1,23 @@
 <template>
-  <v-card class="row-item" :id="`row-item${this.id}`" v-touch="{
-      left: () => onSwipe('Left'),
-      right: () => onSwipe('Right')
-    }">
+  <v-card class="row-item" :id="`row-item${this.id}`">
     <v-progress-linear v-if="_.isEmpty(item)" :indeterminate="true"></v-progress-linear>
     <div class="wrapper" v-else>
-       <div>
-         <div class="visit-link">
-           <div @click="openVistLink" class="text">Go</div>
-         </div>
-         <div class="discuss-link">
-           <router-link :to="{ name: 'store', params: { id: this.id }}" class="text">Discuss</router-link>
-         </div>
-       </div>
-       <div class="static animate" @click="resetState" :style="{ 'transform': `translateX(${staticX}px) translateY(-85px)`, 'width': `${getClientWidth}px`}">
-         <div>
-           <div class="">{{ item.title }}</div>
-           <span class="grey--text">{{ getPostedAt }} | @{{ item.by }} | {{ getCommentCount }} comments </span>
-         </div>
-       </div>
+      <v-touch @swipeleft="onSwipeLeft" @swiperight="onSwipeRight" @tap="resetState">
+        <div>
+          <div class="visit-link">
+            <div @click="openVistLink" class="text">Go</div>
+          </div>
+          <div class="discuss-link">
+            <router-link :to="{ name: 'store', params: { id: this.id }}" class="text">Discuss</router-link>
+          </div>
+        </div>
+        <div class="static animate" :style="{ 'transform': `translateX(${staticX}px) translateY(-85px)`, 'width': `${getClientWidth}px`}">
+          <div>
+            <div class="">{{ item.title }}</div>
+            <span class="grey--text">{{ getPostedAt }} | @{{ item.by }} | {{ getCommentCount }} comments </span>
+          </div>
+        </div>
+      </v-touch>
     </div>
   </v-card>
 </template>
@@ -65,39 +64,16 @@ export default {
       console.log(`onApiComplete - id: ${this.id}`)
       this.item = data
     },
-    onSwipe (direction) {
-      this.swipeDirection = direction
-      if (direction === 'Right') {
-        if (this.showDiscussLink) {
-          this.showDiscussLink = false
-          this.showVisitLink = false
-          this.staticX = 0
-        } else {
-          this.showDiscussLink = false
-          this.showVisitLink = true
-          this.staticX = 100
-        }
-      } else if (direction === 'Left') {
-        if (this.showVisitLink) {
-          this.showDiscussLink = false
-          this.showVisitLink = false
-          this.staticX = 0
-        } else {
-          this.showDiscussLink = true
-          this.showVisitLink = false
-          this.staticX = -100
-        }
-      } else {
-        this.showDiscussLink = false
-        this.showVisitLink = false
-        this.staticX = 0
-      }
-    },
-    resetState (e) {
-      console.log(`resetState`)
-      this.showVisitLink = false
-      this.showDiscussLink = false
-      this.staticX = 0
+    onSwipeLeft () { !this.showVisitLink ? this.displayDiscussLink() : this.resetState() },
+    onSwipeRight () { !this.showDiscussLink ? this.displayVisitLink() : this.resetState() },
+    displayVisitLink () { this.controlState(false, true, 100) },
+    displayDiscussLink () { this.controlState(true, false, -100) },
+    resetState (e) { this.controlState(false, false, 0) },
+    controlState (svl, sdl, sx) {
+      console.log(`controlState - svl: ${svl} sdl: ${sdl} sx: ${sx}`)
+      this.showVisitLink = svl
+      this.showDiscussLink = sdl
+      this.staticX = sx
     },
     openVistLink (e) {
       console.log(`openVistLink - id: ${this.id}`)
