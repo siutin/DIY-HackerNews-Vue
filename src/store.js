@@ -58,8 +58,8 @@ const getStories = (state, STORY_TYPE, name, callback) => {
       callback(data)
     }
   } else {
-    console.log(`fetch hwStories -> ${urls[name]}`)
-    fetch(`${HACKER_NEWS_API_BASE_POINT}/${urls[name]}stories.json`)
+    console.log(`fetch hwStories -> ${name}`)
+    fetch(`${HACKER_NEWS_API_BASE_POINT}/${name}stories.json`)
       .then(res => res.json())
       .then(data => new Promise((resolve, reject) =>
         Vue._.isArray(data) && !Vue._.isEmpty(data) ? resolve(data) : reject(new Error())
