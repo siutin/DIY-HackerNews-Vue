@@ -6,21 +6,22 @@
     >
       <v-menu :nudge-width="100">
        <v-toolbar-title slot="activator">
-         <span>{{ scopeTitles[getActiveScopeIndex] }}</span>
+         <span>{{ getActiveScopeTitle }}</span>
          <v-icon>arrow_drop_down</v-icon>
        </v-toolbar-title>
-
        <v-list>
          <v-list-tile
-           v-for="(scopeTitle, i) in scopeTitles"
+           v-for="(scopeTitle, i) in getScopeTitles"
            :key="scopeTitle"
          >
            <v-list-tile-title v-text="scopeTitle" @click="(e) => onScopeClick(e, scopeTitle, i)"></v-list-tile-title>
          </v-list-tile>
        </v-list>
      </v-menu>
+
      <v-spacer></v-spacer>
-      <v-toolbar-title>{{ getTitle }}</v-toolbar-title>
+
+      <v-toolbar-title>{{ getTitle || this.title }}</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn icon>
          <v-icon>favorite</v-icon>
@@ -29,6 +30,7 @@
          <v-icon>more_vert</v-icon>
        </v-btn>
     </v-toolbar>
+
     <v-content>
       <router-view/>
     </v-content>
@@ -37,21 +39,23 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { captialize } from './utils.js'
 
 export default {
   name: 'App',
   data () {
     return {
       toggleTheme: false,
-      title: 'Hacker News',
-      scopeTitles: ['New', 'Top', 'Best']
+      title: 'Hacker News'
     }
   },
   computed: {
     ...mapGetters([
-      'getActiveScopeIndex'
+      'getActiveScopeName',
+      'getScopeTitles',
+      'getTitle'
     ]),
-    getTitle () { return this.$store.getters.getTitle || this.title }
+    getActiveScopeTitle () { return captialize(this.getActiveScopeName) }
   },
   methods: {
     onScopeClick (e, item, i) {

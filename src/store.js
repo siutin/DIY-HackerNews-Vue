@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import moment from 'moment'
+import { captialize } from './utils.js'
 
 Vue.use(Vuex)
 
@@ -11,12 +12,12 @@ const types = {
   APP_SET_TITLE: 'APP_SET_TITLE',
   APP_SET_ACTIVE_SCOPE: 'APP_SET_ACTIVE_SCOPE'
 }
-const urls = {
-  'new': 'newstories',
-  'top': 'topstories',
-  'best': 'beststories'
-}
-const scopeValues = ['new', 'top', 'best']
+
+const scopes = [
+  { name: 'new', index: 0 },
+  { name: 'top', index: 1 },
+  { name: 'best', index: 2 }
+]
 
 const state = {
   title: '',
@@ -29,13 +30,15 @@ const state = {
   stores: []
 }
 
+const getScopeNameByIndex = index => (Vue._.find(scopes, ['index', index]) || {}).name
+const getScopeIndexByName = name => (Vue._.find(scopes, ['name', name]) || {}).index
+
 const getters = {
-  getStoreIds: (state, getters) => state.storeIds[`${scopeValues[getters.getActiveScopeIndex]}`],
+  getStoreIds: (state, getters) => state.storeIds[getters.getActiveScopeName],
   getStores: state => state.stores,
   getTitle: state => state.title,
-  getScopeValues: state => scopeValues,
-  getActiveScope: (state, getters) => scopeValues[getters.getActiveScopeIndex],
-  getActiveScopeIndex: state => state.activeScopeIndex
+  getActiveScopeName: state => getScopeNameByIndex(state.activeScopeIndex),
+  getScopeTitles: () => scopes.map(scope => captialize(scope.name))
 }
 
 const getStores = (state, STORY_TYPE, name, callback) => {
@@ -56,7 +59,7 @@ const getStores = (state, STORY_TYPE, name, callback) => {
     }
   } else {
     console.log(`fetch hwStores -> ${urls[name]}`)
-    fetch(`${HACKER_NEWS_API_BASE_POINT}/${urls[name]}.json`)
+    fetch(`${HACKER_NEWS_API_BASE_POINT}/${urls[name]}stories.json`)
       .then(res => res.json())
       .then(data => new Promise((resolve, reject) =>
         Vue._.isArray(data) && !Vue._.isEmpty(data) ? resolve(data) : reject(new Error())
@@ -86,7 +89,7 @@ const mutations = {
       name,
       callback
     } = payload
-    let nname = name || getters.getActiveScope
+    let nname = name || getters.getActiveScopeName
     getStores(state, `HW_${nname.toUpperCase()}`, nname, callback)
   },
   [types.HW_GET_STORE](state, payload) {
@@ -135,7 +138,7 @@ const mutations = {
       name
     } = payload
     if (name) {
-      let index = scopeValues.indexOf(name)
+      let index = getScopeIndexByName(name)
       if (index != -1) {
         state.activeScopeIndex = index
       }

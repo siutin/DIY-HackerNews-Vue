@@ -32,9 +32,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'getActiveScope',
-      'getStoreIds',
-      'getActiveScopeIndex'
+      'getStoreIds'
     ]),
     getPaginatedIds () {
       return this.getStoreIds.slice().sort().reverse().slice(0, this.getMaxRowsPerPage * this.maxScrolledPage)
