@@ -1,9 +1,7 @@
 <template>
   <v-app>
-    <v-toolbar
-      app
-      :dark="toggleTheme"
-    >
+    <v-toolbar app :dark="toggleTheme" >
+
       <v-menu :nudge-width="100">
        <v-toolbar-title slot="activator">
          <span>{{ getActiveScopeTitle }}</span>
@@ -60,8 +58,7 @@ export default {
   methods: {
     onScopeClick (e, item, i) {
       console.log(`onScopeClick - item: ${item} i: ${i}`)
-      let name = item.toLowerCase()
-      this.$router.push({ name: 'scopes', params: { name } })
+      this.$router.push({ name: 'scopes', params: { name: item.toLowerCase() } })
     }
   }
 }

@@ -25,7 +25,7 @@ const state = {
   storyIds: {
     new: [],
     top: [],
-    best: [],
+    best: []
   },
   stories: []
 }
@@ -81,7 +81,7 @@ const getStories = (state, STORY_TYPE, name, callback) => {
 }
 
 const mutations = {
-  [types.HW_NEW_STORIES](state, {
+  [types.HW_NEW_STORIES] (state, {
     payload,
     getters
   }) {
@@ -92,7 +92,7 @@ const mutations = {
     let nname = name || getters.getActiveScopeName
     getStories(state, `HW_${nname.toUpperCase()}`, nname, callback)
   },
-  [types.HW_GET_STORY](state, payload) {
+  [types.HW_GET_STORY] (state, payload) {
     const {
       id,
       callback
@@ -125,28 +125,24 @@ const mutations = {
         }).catch(err => console.error(err.message))
     }
   },
-  [types.APP_SET_TITLE](state, payload) {
+  [types.APP_SET_TITLE] (state, payload) {
     console.log(types.APP_SET_TITLE)
-    const {
-      title
-    } = payload
+    const { title } = payload
     state.title = title
   },
-  [types.APP_SET_ACTIVE_SCOPE](state, payload) {
+  [types.APP_SET_ACTIVE_SCOPE] (state, payload) {
     console.log(types.APP_SET_ACTIVE_SCOPE)
-    const {
-      name
-    } = payload
+    const { name } = payload
     if (name) {
       let index = getScopeIndexByName(name)
-      if (index != -1) {
+      if (index !== -1) {
         state.activeScopeIndex = index
       }
     }
   }
 }
 const actions = {
-  syncHWNewStoryIDs({
+  syncHWNewStoryIDs ({
     commit,
     getters
   }, payload) {
@@ -155,17 +151,17 @@ const actions = {
       getters
     })
   },
-  syncHWStory({
+  syncHWStory ({
     commit
   }, payload) {
     commit(types.HW_GET_STORY, payload)
   },
-  setAppTitle({
+  setAppTitle ({
     commit
   }, payload) {
     commit(types.APP_SET_TITLE, payload)
   },
-  setActiveScope({
+  setActiveScope ({
     commit
   }, payload) {
     commit(types.APP_SET_ACTIVE_SCOPE, payload)

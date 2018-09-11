@@ -5,7 +5,6 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import VueLodash from 'vue-lodash'
-import moment from 'moment'
 import vueTouch from 'vue-touch'
 
 Vue.use(VueLodash)
