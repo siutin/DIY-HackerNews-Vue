@@ -85,27 +85,41 @@ const getStories = (state, STORY_TYPE, name, callback) => {
 const generateRunPageSpeedURL = (url) => `https://www.googleapis.com/pagespeedonline/v1/runPagespeed?url=${url}&screenshot=true`
 const getScreenShot = (state, story, callback) => {
   console.log(`getScreenShot`)
+  let screenshot
   let id = story.id
   let url = story.url
   if (url) {
-    let screenshot = Vue._.find(state.screenshots, [id, id])
+    screenshot = Vue._.find(state.screenshots, ['id', id])
     if (screenshot) {
+      console.log(`screenshot - from vuex`)
       if (typeof (callback) === 'function') {
         callback(screenshot)
       }
     } else {
-      fetch(generateRunPageSpeedURL(url))
-        .then(res => res.json())
-        .then(data => new Promise((resolve, reject) =>
-          !Vue._.isEmpty(data) ? resolve(data) : reject(new Error('data is empty'))
-        ))
-        .then(data => {
-          let screenshot = data['screenshot']
-          Vue.set(state, 'screenshots', [...state.screenshots, screenshot])
-          if (typeof (callback) === 'function') {
-            callback(screenshot)
-          }
-        }).catch(err => console.error(err.message))
+      screenshot = window.localStorage.getItem(`screenshot-${id}`)
+      if (screenshot) {
+        screenshot = JSON.parse(screenshot)
+        Vue.set(state, 'screenshots', [...state.screenshots, screenshot])
+        if (typeof (callback) === 'function') {
+          callback(screenshot)
+        }
+      } else {
+        console.log(`screenshot - from internet`)
+        fetch(generateRunPageSpeedURL(url))
+          .then(res => res.json())
+          .then(data => new Promise((resolve, reject) =>
+            !Vue._.isEmpty(data) ? resolve(data) : reject(new Error('data is empty'))
+          ))
+          .then(data => {
+            let screenshot = data['screenshot']
+            Vue.set(state, 'screenshots', [...state.screenshots, screenshot])
+            window.localStorage.setItem(`screenshot-${id}`, JSON.stringify(screenshot))
+            // window.localStorage.setItem(`screenshot-${id}#last_updated_at`, moment().toISOString())
+            if (typeof (callback) === 'function') {
+              callback(screenshot)
+            }
+          }).catch(err => console.error(err.message))
+      }
     }
   }
 }
