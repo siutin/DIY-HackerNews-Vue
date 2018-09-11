@@ -3,6 +3,12 @@
     <v-progress-linear v-if="_.isEmpty(item)" :indeterminate="true"></v-progress-linear>
     <div class="wrapper" v-else>
       <v-touch @swipeleft="onSwipeLeft" @swiperight="onSwipeRight" @tap="resetState" :swipe-options="{ direction: 'horizontal' }">
+        <div class="image" v-show="hasImage">
+          <v-progress-circular v-if="_.isEmpty(image)" :indeterminate="true"></v-progress-circular>
+          <transition name="fade">
+            <img :src="image" v-show="!_.isEmpty(image)"/>
+          </transition>
+        </div>
         <div>
           <div class="visit-link">
             <div @click="openVistLink" class="text">Go</div>
@@ -39,7 +45,8 @@ export default {
       showVisitLink: false,
       showDiscussLink: false,
       staticX: 0,
-      item: {}
+      item: {},
+      image: ''
     }
   },
   watch: {
@@ -57,12 +64,21 @@ export default {
     getPostedAt () { return moment.unix(this.item.time).fromNow() },
     getCommentCount () { return this.item.descendants },
     getClientWidth () { return document.body.clientWidth },
-    getStaticClasses () { return this.staticClasses }
+    getStaticClasses () { return this.staticClasses },
+    hasImage () { return this.item.url !== undefined }
   },
   methods: {
     onApiComplete (data) {
       console.log(`onApiComplete - id: ${this.id}`)
       this.item = data
+      this.$store.dispatch('getStoryScreenshot',
+        {
+          id: this.id,
+          callback: screenshot => {
+            let image = screenshot.data.replace(/_/g, '/').replace(/-/g, '+')
+            this.image = `data:image/jpeg;base64,${image}`
+          }
+        })
     },
     onSwipeLeft () { !this.showVisitLink ? this.displayDiscussLink() : this.resetState() },
     onSwipeRight () { !this.showDiscussLink ? this.displayVisitLink() : this.resetState() },
@@ -93,11 +109,23 @@ export default {
 
   .row-item {
     position: relative;
-    max-height: 85px;
+    max-height: 265px;
   }
 
   .wrapper {
     display: inline-block;
+  }
+
+  .image {
+    height: 180px;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .image-hack {
+    position: relative;
   }
 
   .static {
@@ -151,5 +179,12 @@ export default {
       font-size: 15pt;
       text-decoration: none;
     }
+  }
+
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity .5s;
+  }
+  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+    opacity: 0;
   }
   </style>

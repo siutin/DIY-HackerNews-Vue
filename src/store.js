@@ -10,7 +10,8 @@ const types = {
   HW_NEW_STORIES: 'HW_NEW_STORIES',
   HW_GET_STORY: 'HW_GET_STORY',
   APP_SET_TITLE: 'APP_SET_TITLE',
-  APP_SET_ACTIVE_SCOPE: 'APP_SET_ACTIVE_SCOPE'
+  APP_SET_ACTIVE_SCOPE: 'APP_SET_ACTIVE_SCOPE',
+  GET_STORY_SCREENSHOT: 'GET_STORY_SCREENSHOT'
 }
 
 const scopes = [
@@ -27,7 +28,8 @@ const state = {
     top: [],
     best: []
   },
-  stories: []
+  stories: [],
+  screenshots: []
 }
 
 const getScopeNameByIndex = index => (Vue._.find(scopes, ['index', index]) || {}).name
@@ -80,6 +82,34 @@ const getStories = (state, STORY_TYPE, name, callback) => {
   }
 }
 
+const generateRunPageSpeedURL = (url) => `https://www.googleapis.com/pagespeedonline/v1/runPagespeed?url=${url}&screenshot=true`
+const getScreenShot = (state, story, callback) => {
+  console.log(`getScreenShot`)
+  let id = story.id
+  let url = story.url
+  if (url) {
+    let screenshot = Vue._.find(state.screenshots, [id, id])
+    if (screenshot) {
+      if (typeof (callback) === 'function') {
+        callback(screenshot)
+      }
+    } else {
+      fetch(generateRunPageSpeedURL(url))
+        .then(res => res.json())
+        .then(data => new Promise((resolve, reject) =>
+          !Vue._.isEmpty(data) ? resolve(data) : reject(new Error('data is empty'))
+        ))
+        .then(data => {
+          let screenshot = data['screenshot']
+          Vue.set(state, 'screenshots', [...state.screenshots, screenshot])
+          if (typeof (callback) === 'function') {
+            callback(screenshot)
+          }
+        }).catch(err => console.error(err.message))
+    }
+  }
+}
+
 const mutations = {
   [types.HW_NEW_STORIES] (state, {
     payload,
@@ -93,10 +123,7 @@ const mutations = {
     getStories(state, `HW_${nname.toUpperCase()}`, nname, callback)
   },
   [types.HW_GET_STORY] (state, payload) {
-    const {
-      id,
-      callback
-    } = payload
+    const { id, callback } = payload
     const story = window.localStorage.getItem(`story-${id}`)
 
     const lastUpdatedAt = window.localStorage.getItem(`story-${id}#last_updated_at`)
@@ -104,8 +131,10 @@ const mutations = {
     console.log(`${types.HW_GET_STORY} - story-${id} - useCache: ${useCache}`)
 
     if (story && useCache) {
+      const data = JSON.parse(story)
+      Vue.set(state, 'stories', [...state.stories, data])
       if (typeof (callback) === 'function') {
-        callback(JSON.parse(story))
+        callback(data)
       }
     } else {
       console.log('fetch newstories')
@@ -139,32 +168,29 @@ const mutations = {
         state.activeScopeIndex = index
       }
     }
+  },
+  [types.GET_STORY_SCREENSHOT] (state, payload) {
+    console.log(types.GET_STORY_SCREENSHOT)
+    const { id, callback } = payload
+    const story = Vue._.find(state.stories, ['id', id])
+    getScreenShot(state, story, callback)
   }
 }
 const actions = {
-  syncHWNewStoryIDs ({
-    commit,
-    getters
-  }, payload) {
-    commit(types.HW_NEW_STORIES, {
-      payload,
-      getters
-    })
+  syncHWNewStoryIDs ({ commit, getters }, payload) {
+    commit(types.HW_NEW_STORIES, { payload, getters })
   },
-  syncHWStory ({
-    commit
-  }, payload) {
+  syncHWStory ({ commit }, payload) {
     commit(types.HW_GET_STORY, payload)
   },
-  setAppTitle ({
-    commit
-  }, payload) {
+  setAppTitle ({ commit }, payload) {
     commit(types.APP_SET_TITLE, payload)
   },
-  setActiveScope ({
-    commit
-  }, payload) {
+  setActiveScope ({ commit }, payload) {
     commit(types.APP_SET_ACTIVE_SCOPE, payload)
+  },
+  getStoryScreenshot ({ commit }, payload) {
+    commit(types.GET_STORY_SCREENSHOT, payload)
   }
 }
 
