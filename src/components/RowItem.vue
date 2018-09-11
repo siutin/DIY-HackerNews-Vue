@@ -5,15 +5,15 @@
     }">
     <v-progress-linear v-if="_.isEmpty(item)" :indeterminate="true"></v-progress-linear>
     <div class="wrapper" v-else>
-       <v-layout row justify-space-between>
-         <v-flex xs3 class="visit-link">
+       <div>
+         <div class="visit-link">
            <div @click="openVistLink" class="text">Go</div>
-         </v-flex>
-         <v-flex xs3 class="discuss-link">
+         </div>
+         <div class="discuss-link">
            <router-link :to="{ name: 'store', params: { id: this.id }}" class="text">Discuss</router-link>
-         </v-flex>
-       </v-layout>
-       <div class="static animate" @click="resetState" :style="{ 'transform': `translateX(${staticX}px)`, 'width': `${getClientWidth}px`}">
+         </div>
+       </div>
+       <div class="static animate" @click="resetState" :style="{ 'transform': `translateX(${staticX}px) translateY(-85px)`, 'width': `${getClientWidth}px`}">
          <div>
            <div class="">{{ item.title }}</div>
            <span class="grey--text">{{ getPostedAt }} | @{{ item.by }} | {{ getCommentCount }} comments </span>
@@ -117,6 +117,7 @@ export default {
 
   .row-item {
     position: relative;
+    max-height: 85px;
   }
 
   .wrapper {
@@ -125,12 +126,13 @@ export default {
 
   .static {
     background-color: white;
-    margin-top: -85px;
     min-height: 85px;
     display: flex;
     align-items: center;
     padding-left: 10pt;
     padding-right: 10pt;
+
+    position: relative;
   }
 
   .static.animate {
@@ -140,6 +142,7 @@ export default {
   }
 
   .visit-link {
+    float: left;
     background-color: green;
     font-size: 0;
     width: 100px;
@@ -157,6 +160,7 @@ export default {
   }
 
   .discuss-link {
+    float: right;
     background-color: orange;
     font-size: 0;
     width: 100px;
