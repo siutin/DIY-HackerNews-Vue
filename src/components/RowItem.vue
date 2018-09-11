@@ -4,7 +4,7 @@
       right: () => onSwipe('Right')
     }">
     <v-progress-linear v-if="_.isEmpty(item)" :indeterminate="true"></v-progress-linear>
-    <div class="wrapper">
+    <div class="wrapper" v-else>
        <v-layout row justify-space-between>
          <v-flex xs3 class="visit-link">
            <div @click="openVistLink" class="text">Go</div>
@@ -14,15 +14,16 @@
          </v-flex>
        </v-layout>
        <div class="static animate" @click="resetState" :style="{ 'transform': `translateX(${staticX}px)`, 'width': `${getClientWidth}px`}">
-         <div class="">{{ item.title }}</div>
-         <span class="grey--text">{{ getPostedAt }} | @{{ item.by }} | {{ getCommentCount }} comments </span>
+         <div>
+           <div class="">{{ item.title }}</div>
+           <span class="grey--text">{{ getPostedAt }} | @{{ item.by }} | {{ getCommentCount }} comments </span>
+         </div>
        </div>
     </div>
   </v-card>
 </template>
 
 <script>
-import Vue from 'vue'
 import moment from 'moment'
 
 export default {
@@ -66,7 +67,6 @@ export default {
     },
     onSwipe (direction) {
       this.swipeDirection = direction
-      let i, j
       if (direction === 'Right') {
         if (this.showDiscussLink) {
           this.showDiscussLink = false
@@ -126,7 +126,11 @@ export default {
   .static {
     background-color: white;
     margin-top: -85px;
-    padding: 15pt;
+    min-height: 85px;
+    display: flex;
+    align-items: center;
+    padding-left: 10pt;
+    padding-right: 10pt;
   }
 
   .static.animate {
