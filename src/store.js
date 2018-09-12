@@ -125,14 +125,8 @@ const getScreenShot = (state, story, callback) => {
 }
 
 const mutations = {
-  [types.HW_NEW_STORIES] (state, {
-    payload,
-    getters
-  }) {
-    const {
-      name,
-      callback
-    } = payload
+  [types.HW_NEW_STORIES] (state, { payload, getters }) {
+    const { name, callback } = payload
     let nname = name || getters.getActiveScopeName
     getStories(state, `HW_${nname.toUpperCase()}`, nname, callback)
   },
