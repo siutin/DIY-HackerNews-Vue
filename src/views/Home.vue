@@ -20,7 +20,10 @@ import MugenScroll from 'vue-mugen-scroll'
 import { mapGetters } from 'vuex'
 import RowItem from '@/components/RowItem.vue'
 
-const rowHeight = 88
+const rowHeight = 265
+const toolBarHeight = 56
+const prefetchRows = 2
+
 export default {
   name: 'Home',
   components: { RowItem, MugenScroll },
@@ -38,19 +41,13 @@ export default {
       return this.getStoryIds.slice().sort().reverse().slice(0, this.getMaxRowsPerPage * this.maxScrolledPage)
     },
     getMaxRowsPerPage () {
-      return Math.ceil((window.innerHeight - 56) / rowHeight) + 1
+      return Math.ceil((window.innerHeight - toolBarHeight) / rowHeight) + prefetchRows
     }
   },
   methods: {
-    onRefreshClicked () {
-      console.log('onRefreshClicked')
-      this.updateData(this)
-    },
-    syncData (vm, name) {
-      vm.$store.dispatch('syncHWNewStoryIDs', { name })
-    },
-    setActiveScope (vm, name) {
-      vm.$store.dispatch('setActiveScope', { name })
+    setup (name) {
+      this.$store.dispatch('setActiveScope', { name })
+      this.$store.dispatch('syncHWNewStoryIDs', { name })
     },
     updateScrollPage () {
       console.log(`updateScrollPage`)
@@ -60,16 +57,10 @@ export default {
     }
   },
   beforeRouteEnter (to, from, next) {
-    let name = to.params.name
-    next(vm => {
-      vm.setActiveScope(vm, name)
-      vm.syncData(vm, name)
-    })
+    next(vm => vm.setup.bind(vm)(to.params.name))
   },
   beforeRouteUpdate (to, from, next) {
-    let name = to.params.name
-    this.setActiveScope(this, name)
-    this.syncData(this, name)
+    this.setup(to.params.name)
     next()
   },
   mounted () {
