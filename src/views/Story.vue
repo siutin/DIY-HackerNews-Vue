@@ -2,18 +2,16 @@
   <div class="story">
     <v-progress-circular v-if="loading" :indeterminate="true"></v-progress-circular>
     <v-list subheader three-line>
-      <div class="content">
-          <div>{{ item.title }}</div>
-          <div v-html="item.text"></div>
-          <span class="grey--text">{{ formatPostedAt(item) }} | @{{ item.by }}</span>
-      </div>
-      <div v-for="(subItem, index) in getCleanUpSubItems" :key="index">
+
+      <div v-for="(record, index) in getOrderedList" :key="index">
         <v-divider></v-divider>
         <div class="content">
-          <div v-html="subItem.text"></div>
-          <span class="grey--text">{{ formatPostedAt(subItem) }} | @{{ subItem.by }}</span>
+          <div v-if="record.title">{{ record.title }}</div>
+          <div v-html="record.text"></div>
+          <span class="grey--text">{{ formatPostedAt(record) }} | @{{ record.by }}</span>
         </div>
       </div>
+
     </v-list>
   </div>
 </template>
@@ -27,7 +25,10 @@ export default {
   components: {},
   data () {
     return {
-      id: -1,
+      id: {
+        default: -1,
+        type: Number
+      },
       loading: false,
       item: {},
       subItems: [],
@@ -35,11 +36,13 @@ export default {
     }
   },
   computed: {
+    getId () { return parseInt(this.id) },
     getKids () { return this.item.kids },
-    getCleanUpSubItems () {
-      return this.subItems.filter(subItem => !subItem.deleted).slice().sort((a, b) => {
+    getOrderedList () {
+      let orderedComments = this.subItems.filter(subItem => !subItem.deleted).slice().sort((a, b) => {
         return this.orderedIds.indexOf(a.id) - this.orderedIds.indexOf(b.id)
       })
+      return [this.item, ...orderedComments]
     }
   },
   methods: {
@@ -47,16 +50,14 @@ export default {
     onApiComplete (data) {
       console.log(`onApiComplete`)
       this.item = data
-      this.$store.dispatch('setAppTitle', {
-        title: this.item.title
-      })
+      this.$store.dispatch('setAppTitle', { title: this.item.title })
       this.loading = false
       Vue._.each(data.kids, kid => this.orderedIds.push(kid))
 
       this.walkThroughComments(data)
     },
     walkThroughComments (data) {
-      if (data.id !== this.id) {
+      if (data.id !== this.getId) {
         let index = Vue._.findIndex(this.orderedIds, oid => oid === data.id)
         console.log(`index: ${index} id: ${data.id} parentId: ${data.parent} this.orderedIds: ${this.orderedIds}`)
         if (index !== -1) {
@@ -77,35 +78,23 @@ export default {
         })
       })
     },
-    syncData (vm) {
+    setup (id) {
+      this.id = id
       this.loading = false
-      vm.$store.dispatch('syncHWStory', {
+      this.$store.dispatch('syncHWStory', {
         id: this.id,
         callback: this.onApiComplete
       })
     }
   },
   beforeRouteEnter (to, from, next) {
-    let id = to.params.id
-    if (id) {
-      next(vm => {
-        vm.id = id
-        vm.syncData(vm)
-      })
-    }
+    next(vm => vm.setup.bind(vm)(to.params.id))
   },
   beforeRouteUpdate (to, from, next) {
-    let id = to.params.id
-    if (id) {
-      this.id = id
-      this.syncData(this)
-      next()
-    }
+    this.setup(to.params.id)
   },
   beforeRouteLeave (to, from, next) {
-    this.$store.dispatch('setAppTitle', {
-      title: ''
-    })
+    this.$store.dispatch('setAppTitle', { title: '' })
     next()
   }
 }
