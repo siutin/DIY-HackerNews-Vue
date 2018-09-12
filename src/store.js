@@ -114,7 +114,6 @@ const getScreenShot = (state, story, callback) => {
             let screenshot = data['screenshot']
             Vue.set(state, 'screenshots', [...state.screenshots, screenshot])
             window.localStorage.setItem(`screenshot-${id}`, JSON.stringify(screenshot))
-            // window.localStorage.setItem(`screenshot-${id}#last_updated_at`, moment().toISOString())
             if (typeof (callback) === 'function') {
               callback(screenshot)
             }
