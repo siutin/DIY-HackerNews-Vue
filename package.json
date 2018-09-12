@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "date-fns": "^2.0.0-alpha.16",
-    "lodash": "^4.17.10",
     "vue": "^2.5.17",
     "vue-lodash": "^2.0.0",
     "vue-mugen-scroll": "^0.2.5",
