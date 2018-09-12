@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import moment from 'moment'
+import { timeFromNow } from '../utils.js'
 
 export default {
   name: 'RowItem',
@@ -61,7 +61,7 @@ export default {
     }
   },
   computed: {
-    getPostedAt () { return moment.unix(this.item.time).fromNow() },
+    getPostedAt () { return timeFromNow(this.item.time) },
     getCommentCount () { return this.item.descendants },
     getClientWidth () { return document.body.clientWidth },
     getStaticClasses () { return this.staticClasses },

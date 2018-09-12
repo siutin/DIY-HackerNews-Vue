@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import moment from 'moment'
+import { isAfter, addMinutes } from 'date-fns'
 import { captialize } from './utils.js'
 
 Vue.use(Vuex)
@@ -46,7 +46,7 @@ const getters = {
 const getStories = (state, STORY_TYPE, name, callback) => {
   const hwStories = window.localStorage.getItem(STORY_TYPE)
   const lastUpdatedAt = window.localStorage.getItem(`${STORY_TYPE}#last_updated_at`)
-  const useCache = moment().add(1, 'minutes').isAfter(moment(lastUpdatedAt))
+  const useCache = isAfter(addMinutes(new Date(), 1), new Date(lastUpdatedAt))
   console.log(`${STORY_TYPE} - useCache: ${useCache} hwStories: ${(hwStories || []).length}`)
 
   if (hwStories && useCache) {
@@ -68,7 +68,7 @@ const getStories = (state, STORY_TYPE, name, callback) => {
       ))
       .then(data => {
         window.localStorage.setItem(STORY_TYPE, JSON.stringify(data))
-        window.localStorage.setItem(`${STORY_TYPE}#last_updated_at`, moment().toISOString())
+        window.localStorage.setItem(`${STORY_TYPE}#last_updated_at`, new Date())
 
         Vue._.each(data, storyId => {
           if (state.storyIds[name].indexOf(storyId) === -1) {
@@ -141,7 +141,7 @@ const mutations = {
     const story = window.localStorage.getItem(`story-${id}`)
 
     const lastUpdatedAt = window.localStorage.getItem(`story-${id}#last_updated_at`)
-    const useCache = moment().add(1, 'minutes').isAfter(moment(lastUpdatedAt))
+    const useCache = isAfter(addMinutes(new Date(), 1), new Date(lastUpdatedAt))
     console.log(`${types.HW_GET_STORY} - story-${id} - useCache: ${useCache}`)
 
     if (story && useCache) {
@@ -160,7 +160,7 @@ const mutations = {
         .then(data => {
           Vue.set(state, 'stories', [...state.stories, data])
           window.localStorage.setItem(`story-${id}`, JSON.stringify(data))
-          window.localStorage.setItem(`story-${id}#last_updated_at`, moment().toISOString())
+          window.localStorage.setItem(`story-${id}#last_updated_at`, new Date())
 
           if (typeof (callback) === 'function') {
             callback(data)

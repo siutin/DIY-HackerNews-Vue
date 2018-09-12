@@ -20,7 +20,7 @@
 
 <script>
 import Vue from 'vue'
-import moment from 'moment'
+import { timeFromNow } from '../utils.js'
 
 export default {
   name: 'Story',
@@ -43,7 +43,7 @@ export default {
     }
   },
   methods: {
-    formatPostedAt (item) { return moment.unix(item.time).fromNow() },
+    formatPostedAt (item) { return timeFromNow(item.time) },
     onApiComplete (data) {
       console.log(`onApiComplete`)
       this.item = data
