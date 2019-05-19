@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { isAfter, addMinutes } from 'date-fns'
+import { isBefore, addMinutes } from 'date-fns'
 import { captialize } from './utils.js'
 
 Vue.use(Vuex)
@@ -46,7 +46,7 @@ const getters = {
 const getStories = (state, STORY_TYPE, name, callback) => {
   const hwStories = window.localStorage.getItem(STORY_TYPE)
   const lastUpdatedAt = window.localStorage.getItem(`${STORY_TYPE}#last_updated_at`)
-  const useCache = isAfter(addMinutes(new Date(), 1), new Date(lastUpdatedAt))
+  const useCache = isBefore(addMinutes(new Date(), 1), new Date(lastUpdatedAt))
   console.log(`${STORY_TYPE} - useCache: ${useCache} hwStories: ${(hwStories || []).length}`)
 
   if (hwStories && useCache) {
@@ -134,7 +134,7 @@ const mutations = {
     const story = window.localStorage.getItem(`story-${id}`)
 
     const lastUpdatedAt = window.localStorage.getItem(`story-${id}#last_updated_at`)
-    const useCache = isAfter(addMinutes(new Date(), 1), new Date(lastUpdatedAt))
+    const useCache = isBefore(addMinutes(new Date(), 1), new Date(lastUpdatedAt))
     console.log(`${types.HW_GET_STORY} - story-${id} - useCache: ${useCache}`)
 
     if (story && useCache) {
