@@ -101,6 +101,9 @@ export default {
   created () {
     console.log(`RowItem - created`)
     this.$store.dispatch('syncHWStory', { id: this.id, callback: this.onApiComplete })
+  },
+  destroyed () {
+    this.image = ''
   }
 }
 </script>
