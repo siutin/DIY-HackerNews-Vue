@@ -112,6 +112,9 @@ const getScreenShot = (state, story, callback) => {
           ))
           .then(data => {
             let screenshot = data['screenshot']
+            if (Vue._.isEmpty(screenshot)) {
+              throw new Error('screenshot is empty')
+            }
             Vue.set(state, 'screenshots', [...state.screenshots, screenshot])
             window.localStorage.setItem(`screenshot-${id}`, JSON.stringify(screenshot))
             if (typeof (callback) === 'function') {
