@@ -18,11 +18,8 @@
      </v-menu>
 
      <v-spacer></v-spacer>
-
       <v-toolbar-title>{{ this.title }}</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-spacer></v-spacer>
-      <v-spacer></v-spacer>
+
     </v-toolbar>
 
     <v-content>
