@@ -15,8 +15,8 @@ const types = {
 }
 
 const scopes = [
-  { name: 'new', index: 0 },
-  { name: 'top', index: 1 },
+  { name: 'top', index: 0 },
+  { name: 'new', index: 1 },
   { name: 'best', index: 2 }
 ]
 
