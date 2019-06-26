@@ -1,21 +1,5 @@
-# hw
+# DIY-HackerNews-Vue
 
-## Project setup
-```
-npm install
-```
+Dynamic Links Preview of HackerNews in Vue without backend, built using Official Firebase API & Google PageSpeed Insights API
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
+Live Demo: https://siutin.github.io/diy-hackernews-vue-showcase/
