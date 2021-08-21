@@ -82,7 +82,7 @@ const getStories = (state, STORY_TYPE, name, callback) => {
   }
 }
 
-const generateRunPageSpeedURL = (url) => `https://www.googleapis.com/pagespeedonline/v1/runPagespeed?url=${url}&screenshot=true`
+const generateRunPageSpeedURL = (url) => `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${url}&screenshot=true`
 const getScreenShot = (state, story, callback) => {
   console.log(`getScreenShot`)
   let screenshot
@@ -111,7 +111,7 @@ const getScreenShot = (state, story, callback) => {
             !Vue._.isEmpty(data) ? resolve(data) : reject(new Error('data is empty'))
           ))
           .then(data => {
-            let screenshot = data['screenshot']
+            let screenshot = data['lighthouseResult']['audits']['final-screenshot']['details']
             if (Vue._.isEmpty(screenshot)) {
               throw new Error('screenshot is empty')
             }

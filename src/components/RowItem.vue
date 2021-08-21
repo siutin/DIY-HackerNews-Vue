@@ -75,8 +75,7 @@ export default {
         {
           id: this.id,
           callback: screenshot => {
-            let image = screenshot.data.replace(/_/g, '/').replace(/-/g, '+')
-            this.image = `data:image/jpeg;base64,${image}`
+            this.image =screenshot.data.replace(/_/g, '/').replace(/-/g, '+')
           }
         })
     },
@@ -125,6 +124,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
   }
 
   .image-hack {
