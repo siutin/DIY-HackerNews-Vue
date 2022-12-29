@@ -19,15 +19,15 @@
   },
   "devDependencies": {
     "@babel/polyfill": "^7.0.0-beta.49",
-    "@vue/cli-plugin-babel": "^3.0.0",
-    "@vue/cli-plugin-eslint": "^3.0.0",
-    "@vue/cli-service": "^3.0.0",
+    "@vue/cli-plugin-babel": "^3.12.1",
+    "@vue/cli-plugin-eslint": "^5.0.8",
+    "@vue/cli-service": "^5.0.8",
     "@vue/eslint-config-standard": "^3.0.1",
     "babel-plugin-transform-imports": "^1.5.1",
     "sass": "^1.38.0",
     "sass-loader": "^9.0.0",
     "stylus": "^0.54.5",
-    "stylus-loader": "^3.0.2",
+    "stylus-loader": "^7.1.0",
     "vue-cli-plugin-vuetify": "^0.1.6",
     "vue-template-compiler": "^2.5.17"
   }
